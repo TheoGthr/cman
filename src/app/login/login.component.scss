@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10%;
+  position: relative;
+  padding: 5px;
+}
+
+.login-form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.login-full-width {
+  width: 100%;
+}
+
+.login-full-width:nth-last-child(0) {
+  margin-bottom: 10px;
+}
+
+.button-row {
+  margin: 10px 0;
+}
+
+.mat-flat-button {
+  margin: 5px;
+}
