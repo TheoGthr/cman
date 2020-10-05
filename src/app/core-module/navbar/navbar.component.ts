@@ -2,6 +2,8 @@ import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
 import { Component, OnInit } from "@angular/core";
 import { Observable } from "rxjs";
 import { map, shareReplay } from "rxjs/operators";
+import { ModelsService } from "../../services/models.service";
+import { Model } from "../../types";
 
 @Component({
   selector: "cman-navbar",
@@ -15,25 +17,26 @@ import { map, shareReplay } from "rxjs/operators";
         fixedInViewport
         [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
         [mode]="(isHandset$ | async) ? 'over' : 'side'"
-        [opened]="isConnected && (isHandset$ | async) === false"
+        [opened]="(isHandset$ | async) === false"
       >
         <mat-toolbar id="left-toolbar">Cman</mat-toolbar>
-        <mat-nav-list *ngIf="isConnected">
-          <a mat-list-item href="#"
-            ><mat-icon aria-label="Movies icon">movie</mat-icon>Movies</a
-          >
-          <a mat-list-item href="#"
-            ><mat-icon aria-label="Games icon">sports_esports</mat-icon>Games</a
-          >
-          <a mat-list-item href="#"
-            ><mat-icon aria-label="Comics icon">menu_book</mat-icon>Comics</a
+        <mat-nav-list
+          ><a mat-list-item href="admin"
+            ><mat-icon aria-label="Admin icon">build_circle</mat-icon>Admin</a
+          ></mat-nav-list
+        >
+        <mat-divider></mat-divider>
+        <mat-nav-list *ngFor="let modelName of modelsNames">
+          <a mat-list-item [routerLink]="[modelName]" routerLinkActive="active"
+            ><mat-icon aria-label="Movies icon">{{ modelName.icon }}</mat-icon
+            >{{ modelName.type | titlecase }}</a
           >
         </mat-nav-list>
       </mat-sidenav>
       <mat-sidenav-content>
         <mat-toolbar color="primary">
           <button
-            *ngIf="isConnected && (isHandset$ | async)"
+            *ngIf="isHandset$ | async"
             type="button"
             aria-label="Toggle sidenav"
             mat-icon-button
@@ -49,6 +52,8 @@ import { map, shareReplay } from "rxjs/operators";
   `,
 })
 export class CmanNavbarComponent implements OnInit {
+  modelsNames: any[];
+
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
     .pipe(
@@ -56,20 +61,18 @@ export class CmanNavbarComponent implements OnInit {
       shareReplay()
     );
 
-  isConnected: boolean = false;
+  constructor(
+    private breakpointObserver: BreakpointObserver,
+    private modelsService: ModelsService
+  ) {}
 
-  constructor(private breakpointObserver: BreakpointObserver) {}
-
-  ngOnInit(): void {
-    if (localStorage.getItem("username")) {
-      this.isConnected = true; // TODO: do it with RxJS
-    }
-    console.log(this.isConnected);
-  }
-
-  ngOnChanges(): void {
-    if (localStorage.getItem("username")) {
-      this.isConnected = true;
-    }
+  ngOnInit() {
+    this.modelsService.getModelsNames().subscribe((data) => {
+      this.modelsNames = data.map((e: Model) => {
+        return {
+          ...e,
+        };
+      });
+    });
   }
 }
