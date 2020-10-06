@@ -29,7 +29,7 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   styleUrls: ["./login.component.scss"],
   template: `
     <div class="container">
-      <form
+      <!--form
         class="login-form"
         [formGroup]="loginForm"
         (ngSubmit)="onFormSubmit(loginForm.value)"
@@ -63,7 +63,7 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
             <mat-icon>login</mat-icon>
           </button>
         </div>
-      </form>
+      </form-->
     </div>
   `,
 })

@@ -1,5 +1,6 @@
 import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
 import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { map, shareReplay } from "rxjs/operators";
 import { ModelsService } from "../../services/models.service";
@@ -20,14 +21,22 @@ import { Model } from "../../types";
         [opened]="(isHandset$ | async) === false"
       >
         <mat-toolbar id="left-toolbar">Cman</mat-toolbar>
-        <mat-nav-list
-          ><a mat-list-item href="admin"
+        <mat-nav-list *ngIf="router.url === '/admin'"
+          ><a mat-list-item routerLink="admin"
+            ><mat-icon aria-label="Admin icon">build_circle</mat-icon>Admin</a
+          ></mat-nav-list
+        >
+        <mat-nav-list *ngIf="router.url !== '/admin'"
+          ><a mat-list-item routerLink="admin"
             ><mat-icon aria-label="Admin icon">build_circle</mat-icon>Admin</a
           ></mat-nav-list
         >
         <mat-divider></mat-divider>
         <mat-nav-list *ngFor="let modelName of modelsNames">
-          <a mat-list-item [routerLink]="[modelName]" routerLinkActive="active"
+          <a
+            mat-list-item
+            [routerLink]="[modelName.type]"
+            routerLinkActive="active"
             ><mat-icon aria-label="Movies icon">{{ modelName.icon }}</mat-icon
             >{{ modelName.type | titlecase }}</a
           >
@@ -63,6 +72,7 @@ export class CmanNavbarComponent implements OnInit {
 
   constructor(
     private breakpointObserver: BreakpointObserver,
+    public router: Router,
     private modelsService: ModelsService
   ) {}
 

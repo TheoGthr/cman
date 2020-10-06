@@ -1,16 +1,8 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 
 @Component({
   selector: "cman-admin",
   styleUrls: ["./admin.component.scss"],
-  template: `
-    <div class="container">
-      <button mat-raised-button color="primary">New model</button>
-    </div>
-  `,
+  template: ` <router-outlet></router-outlet> `,
 })
-export class CmanAdminComponent implements OnInit {
-  constructor() {}
-
-  ngOnInit(): void {}
-}
+export class CmanAdminComponent {}

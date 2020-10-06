@@ -8,6 +8,8 @@ import { MatListModule } from "@angular/material/list";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatDividerModule } from "@angular/material/divider";
+import { MatCardModule } from "@angular/material/card";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 @NgModule({
   imports: [
@@ -19,6 +21,8 @@ import { MatDividerModule } from "@angular/material/divider";
     MatFormFieldModule,
     MatInputModule,
     MatDividerModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
   ],
   exports: [
     MatButtonModule,
@@ -29,6 +33,8 @@ import { MatDividerModule } from "@angular/material/divider";
     MatFormFieldModule,
     MatInputModule,
     MatDividerModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
   ],
 })
 export class MaterialModule {}
