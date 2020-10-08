@@ -9,6 +9,7 @@ export class ModelsService {
   getModelsNames() {
     return this.firestore.collection("models").valueChanges();
   }
+
   createModel(model: Model) {
     return this.firestore.collection("models").add(model);
   }

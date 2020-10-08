@@ -14,6 +14,9 @@ import { ModelsService } from "./services/models.service";
 import { CoreModule } from "./core-module/core.module";
 import { MaterialModule } from "./material.module";
 import { AdminModule } from "./admin-module/admin.module";
+import { StoreModule } from "@ngrx/store";
+import { StoreDevtoolsModule } from "@ngrx/store-devtools";
+import * as modelsReducer from "./ngrx/models.reducer";
 
 @NgModule({
   declarations: [AppComponent],
@@ -29,6 +32,11 @@ import { AdminModule } from "./admin-module/admin.module";
     AngularFireDatabaseModule,
     CoreModule,
     AdminModule,
+    StoreModule.forRoot({ models: modelsReducer.modelsReducer }),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: environment.production,
+    }),
   ],
   exports: [MaterialModule],
   providers: [AuthService, ModelsService],

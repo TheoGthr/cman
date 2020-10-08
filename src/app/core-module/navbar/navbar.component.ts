@@ -1,8 +1,10 @@
 import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
+import { Store } from "@ngrx/store";
 import { Observable } from "rxjs";
 import { map, shareReplay } from "rxjs/operators";
+import { getModels } from "src/app/ngrx/models.actions";
 import { ModelsService } from "../../services/models.service";
 import { Model } from "../../types";
 
@@ -73,16 +75,18 @@ export class CmanNavbarComponent implements OnInit {
   constructor(
     private breakpointObserver: BreakpointObserver,
     public router: Router,
-    private modelsService: ModelsService
+    private modelsService: ModelsService,
+    private store: Store
   ) {}
 
   ngOnInit() {
     this.modelsService.getModelsNames().subscribe((data) => {
-      this.modelsNames = data.map((e: Model) => {
+      this.modelsNames = data.map((e: any) => {
         return {
           ...e,
         };
       });
+      this.store.dispatch(getModels({ modelsList: this.modelsNames }));
     });
   }
 }

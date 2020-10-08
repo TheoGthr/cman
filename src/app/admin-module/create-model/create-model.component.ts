@@ -6,14 +6,18 @@ import { Component, OnInit } from "@angular/core";
   template: `
     <div class="container">
       <form class="example-form">
-        <mat-form-field class="example-full-width">
-          <mat-label>Favorite food</mat-label>
-          <input matInput placeholder="Ex. Pizza" value="Sushi" />
+        <mat-form-field class="form-full-width">
+          <mat-label>Model name</mat-label>
+          <input matInput placeholder="Ex. comics" />
         </mat-form-field>
-
-        <mat-form-field class="example-full-width">
-          <mat-label>Leave a comment</mat-label>
-          <textarea matInput placeholder="Ex. It makes me feel..."></textarea>
+        <mat-form-field class="form-full-width">
+          <mat-label>Material icon</mat-label>
+          <input matInput placeholder="Ex. sports_esports" />
+        </mat-form-field>
+        <mat-form-field class="form-full-width">
+          <mat-label>Definition</mat-label>
+          <textarea matInput> </textarea>
+          <mat-hint>Ex. actors: string[]</mat-hint>
         </mat-form-field>
       </form>
     </div>
@@ -21,6 +25,9 @@ import { Component, OnInit } from "@angular/core";
 })
 export class CmanCreateModelComponent implements OnInit {
   constructor() {}
+
+  // verify model name does not already exist
+  // parse Definition and make it an Object
 
   ngOnInit(): void {}
 }

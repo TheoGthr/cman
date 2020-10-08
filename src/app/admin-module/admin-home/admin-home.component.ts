@@ -1,6 +1,8 @@
 import { Component, OnInit } from "@angular/core";
+import { Store } from "@ngrx/store";
 import { ModelsService } from "src/app/services/models.service";
 import { Model } from "src/app/types";
+import * as fromModels from "../../ngrx/models.selectors";
 
 @Component({
   selector: "cman-admin-home",
@@ -13,15 +15,26 @@ import { Model } from "src/app/types";
         </button>
       </div>
       <div class="models">
-        <mat-spinner *ngIf="!modelsNames"></mat-spinner>
-        <div class="cards" *ngFor="let model of modelsNames">
+        <mat-spinner *ngIf="!isModelsListLoaded"></mat-spinner>
+        <div class="cards" *ngFor="let model of modelsList">
           <mat-card class="example-card">
             <mat-card-header>
-              <mat-card-title>{{ model.type }}</mat-card-title>
-              <mat-card-subtitle>Last update: XXXX</mat-card-subtitle>
+              <mat-card-title>{{ model.type | titlecase }}</mat-card-title>
+              <mat-card-subtitle
+                >Last update:
+                {{
+                  model.lastUpdate.toDate() | date: "dd/MM/yy HH:mm"
+                }}</mat-card-subtitle
+              >
             </mat-card-header>
-            <mat-card-actions>
-              <button mat-raised-button color="warn">Delete</button>
+            <mat-card-actions class="action-buttons">
+              <button
+                mat-raised-button
+                color="warn"
+                (click)="onDelete(model.id)"
+              >
+                Delete
+              </button>
               <button mat-raised-button color="primary" (click)="([model.id])">
                 Update
               </button>
@@ -33,16 +46,21 @@ import { Model } from "src/app/types";
   `,
 })
 export class CmanAdminHomeComponent implements OnInit {
-  modelsNames: any[];
-  constructor(private modelsService: ModelsService) {}
+  modelsList: Model[];
+  isModelsListLoaded: boolean = false;
+
+  constructor(private modelsService: ModelsService, private store: Store) {}
 
   ngOnInit(): void {
-    this.modelsService.getModelsNames().subscribe((data) => {
-      this.modelsNames = data.map((e: Model) => {
-        return {
-          ...e,
-        };
-      });
+    this.store.select(fromModels.getModelsLoaded).subscribe((isLoaded) => {
+      this.isModelsListLoaded = isLoaded;
     });
+    this.store.select(fromModels.getModelsList).subscribe((modelsList) => {
+      this.modelsList = modelsList;
+    });
+  }
+
+  onDelete(modelId: string) {
+    this.modelsService.deleteModel(modelId);
   }
 }
