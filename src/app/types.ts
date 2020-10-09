@@ -1,8 +1,13 @@
-export class Model {
+export interface Horodate {
+  seconds: number;
+  nanoseconds: number;
+}
+
+export interface Model {
   id: string;
   type: string;
   icon: string;
-  lastUpdate: Date;
+  lastUpdate: Horodate;
   definition: any;
 }
 

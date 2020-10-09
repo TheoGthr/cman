@@ -23,25 +23,26 @@ import { Model } from "../../types";
         [opened]="(isHandset$ | async) === false"
       >
         <mat-toolbar id="left-toolbar">Cman</mat-toolbar>
-        <mat-nav-list *ngIf="router.url === '/admin'"
-          ><a mat-list-item routerLink="admin"
-            ><mat-icon aria-label="Admin icon">build_circle</mat-icon>Admin</a
-          ></mat-nav-list
-        >
-        <mat-nav-list *ngIf="router.url !== '/admin'"
-          ><a mat-list-item routerLink="admin"
-            ><mat-icon aria-label="Admin icon">build_circle</mat-icon>Admin</a
-          ></mat-nav-list
-        >
+        <mat-nav-list>
+          <a mat-list-item routerLink="/">
+            <mat-icon aria-label="Admin icon">home</mat-icon>
+            Home
+          </a>
+          <a mat-list-item routerLink="/admin">
+            <mat-icon aria-label="Admin icon">build_circle</mat-icon>
+            Admin
+          </a>
+        </mat-nav-list>
         <mat-divider></mat-divider>
         <mat-nav-list *ngFor="let modelName of modelsNames">
           <a
             mat-list-item
             [routerLink]="[modelName.type]"
             routerLinkActive="active"
-            ><mat-icon aria-label="Movies icon">{{ modelName.icon }}</mat-icon
-            >{{ modelName.type | titlecase }}</a
           >
+            <mat-icon aria-label="Movies icon">{{ modelName.icon }}</mat-icon>
+            {{ modelName.type | titlecase }}
+          </a>
         </mat-nav-list>
       </mat-sidenav>
       <mat-sidenav-content>

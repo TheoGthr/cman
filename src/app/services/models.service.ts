@@ -15,11 +15,11 @@ export class ModelsService {
   }
 
   updateModel(model: Model) {
-    delete model.id;
+    model.lastUpdate.seconds = Date.now();
     this.firestore.doc("models/" + model.id).update(model);
   }
 
   deleteModel(modelId: string) {
-    this.firestore.doc("models/" + modelId).delete();
+    return this.firestore.doc("models/" + modelId).delete();
   }
 }

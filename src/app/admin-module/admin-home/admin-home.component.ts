@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
+import { deleteModel } from "src/app/ngrx/models.actions";
 import { ModelsService } from "src/app/services/models.service";
 import { Model } from "src/app/types";
 import * as fromModels from "../../ngrx/models.selectors";
@@ -23,7 +24,7 @@ import * as fromModels from "../../ngrx/models.selectors";
               <mat-card-subtitle
                 >Last update:
                 {{
-                  model.lastUpdate.toDate() | date: "dd/MM/yy HH:mm"
+                  model.lastUpdate.seconds * 1000 | date: "dd/MM/yy HH:mm"
                 }}</mat-card-subtitle
               >
             </mat-card-header>
@@ -61,6 +62,11 @@ export class CmanAdminHomeComponent implements OnInit {
   }
 
   onDelete(modelId: string) {
-    this.modelsService.deleteModel(modelId);
+    this.modelsService
+      .deleteModel(modelId)
+      .then(() => {
+        this.store.dispatch(deleteModel({ modelId }));
+      })
+      .catch((e) => console.log(e));
   }
 }

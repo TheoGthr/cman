@@ -1,5 +1,5 @@
 import { Action, createReducer, on } from "@ngrx/store";
-import { ModelsState } from "../types";
+import { Model, ModelsState } from "../types";
 
 import {
   createModel,
@@ -24,8 +24,15 @@ const _modelsReducer = createReducer(
     ...state,
     modelsList: state.modelsList.concat(model),
   })),
-  on(updateModel, (state) => ({ ...state, modelsList: [] })),
-  on(deleteModel, (state) => ({ ...state, modelsList: [] }))
+  on(updateModel, (state, { model }) => {
+    state.modelsList
+      .map(function (e: Model) {
+        return e.id;
+      })
+      .indexOf(model.id);
+    return { ...state, modelsList: [] };
+  }),
+  on(deleteModel, (state, { modelId }) => ({ ...state, modelsList: [] }))
 );
 
 export function modelsReducer(state: ModelsState | undefined, action: Action) {
