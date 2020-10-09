@@ -4,6 +4,11 @@
 
 export const environment = {
   production: false
+  firebaseConfig: {
+    apiKey: "",
+    databaseURL: "",
+    projectId: "",
+  },
 };
 
 /*
