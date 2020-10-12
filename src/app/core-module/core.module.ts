@@ -12,6 +12,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { AuthService } from "../services/auth.service";
 import { ModelsService } from "../services/models.service";
 import { RouterModule } from "@angular/router";
+import { ConfirmDialogComponent } from "./confirm-dialog/confirm-dialog.component";
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { RouterModule } from "@angular/router";
     CmanNavbarComponent,
     CmanLoginComponent,
     CmanNotFoundComponent,
+    ConfirmDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -29,7 +31,7 @@ import { RouterModule } from "@angular/router";
     ReactiveFormsModule,
     RouterModule,
   ],
-  exports: [CmanNavbarComponent],
+  exports: [CmanNavbarComponent, ConfirmDialogComponent],
   providers: [AuthService, ModelsService],
 })
 export class CoreModule {}

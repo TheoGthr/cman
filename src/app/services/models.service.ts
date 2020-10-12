@@ -2,7 +2,9 @@ import { Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { Model } from "../types";
 
-@Injectable()
+@Injectable({
+  providedIn: "root",
+})
 export class ModelsService {
   constructor(private firestore: AngularFirestore) {}
 

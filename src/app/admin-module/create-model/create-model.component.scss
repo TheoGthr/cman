@@ -1,4 +1,4 @@
-.example-form {
+.create-form {
   min-width: 150px;
   max-width: 500px;
   width: 100%;
@@ -6,4 +6,9 @@
 
 .form-full-width {
   width: 100%;
+}
+
+#submit-model {
+  margin-top: 5%;
+  float: right;
 }

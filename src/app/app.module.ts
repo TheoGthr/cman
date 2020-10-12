@@ -39,7 +39,6 @@ import * as modelsReducer from "./ngrx/models.reducer";
     }),
   ],
   exports: [MaterialModule],
-  providers: [AuthService, ModelsService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

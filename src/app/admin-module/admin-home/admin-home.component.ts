@@ -1,5 +1,7 @@
 import { Component, OnInit } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 import { Store } from "@ngrx/store";
+import { ConfirmDialogComponent } from "src/app/core-module/confirm-dialog/confirm-dialog.component";
 import { deleteModel } from "src/app/ngrx/models.actions";
 import { ModelsService } from "src/app/services/models.service";
 import { Model } from "src/app/types";
@@ -50,7 +52,11 @@ export class CmanAdminHomeComponent implements OnInit {
   modelsList: Model[];
   isModelsListLoaded: boolean = false;
 
-  constructor(private modelsService: ModelsService, private store: Store) {}
+  constructor(
+    public dialog: MatDialog,
+    private modelsService: ModelsService,
+    private store: Store
+  ) {}
 
   ngOnInit(): void {
     this.store.select(fromModels.getModelsLoaded).subscribe((isLoaded) => {
@@ -62,11 +68,18 @@ export class CmanAdminHomeComponent implements OnInit {
   }
 
   onDelete(modelId: string) {
-    this.modelsService
-      .deleteModel(modelId)
-      .then(() => {
-        this.store.dispatch(deleteModel({ modelId }));
-      })
-      .catch((e) => console.log(e));
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: "Do you confirm the deletion?",
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.modelsService
+          .deleteModel(modelId)
+          .then(() => {
+            this.store.dispatch(deleteModel({ modelId }));
+          })
+          .catch((e) => console.log(e));
+      }
+    });
   }
 }
