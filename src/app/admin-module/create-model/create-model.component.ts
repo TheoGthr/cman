@@ -1,6 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
+import { Store } from "@ngrx/store";
+import { createModel } from "src/app/ngrx/models.actions";
 import { ModelsService } from "src/app/services/models.service";
 import { Model } from "src/app/types";
 
@@ -9,30 +11,26 @@ import { Model } from "src/app/types";
   styleUrls: ["./create-model.component.scss"],
   template: `
     <div class="container">
-      <form class="create-form" [formGroup]="createModelForm">
-        <mat-form-field
-          class="form-full-width"
-          appearance="fill"
-          formArrayName="name"
-        >
-          <mat-label>Model name</mat-label>
-          <input matInput placeholder="Ex. comics" />
+      <form
+        class="create-form"
+        [formGroup]="createModelForm"
+        (ngSubmit)="onSubmit()"
+      >
+        <mat-form-field class="form-full-width" appearance="fill">
+          <mat-label>Model type</mat-label>
+          <input matInput formControlName="type" placeholder="Ex. comics" />
         </mat-form-field>
-        <mat-form-field
-          class="form-full-width"
-          appearance="fill"
-          formArrayName="icon"
-        >
+        <mat-form-field class="form-full-width" appearance="fill">
           <mat-label>Material icon</mat-label>
-          <input matInput placeholder="Ex. sports_esports" />
+          <input
+            matInput
+            formControlName="icon"
+            placeholder="Ex. sports_esports"
+          />
         </mat-form-field>
-        <mat-form-field
-          class="form-full-width"
-          appearance="fill"
-          formArrayName="definition"
-        >
+        <mat-form-field class="form-full-width" appearance="fill">
           <mat-label>Definition</mat-label>
-          <textarea matInput> </textarea>
+          <textarea formControlName="definition" matInput> </textarea>
           <mat-hint>Ex. actors: string[]</mat-hint>
         </mat-form-field>
         <button
@@ -54,23 +52,39 @@ export class CmanCreateModelComponent {
   constructor(
     private fb: FormBuilder,
     private modelsService: ModelsService,
-    private router: Router
+    private router: Router,
+    private store: Store
   ) {
     this.createModelForm = this.fb.group({
-      name: ["", Validators.required],
+      type: ["", Validators.required],
       icon: ["", Validators.required],
       definition: ["", Validators.required],
     });
   }
 
   // verify model name does not already exist
-  // parse Definition and make it an Object
 
   public onSubmit() {
-    this.modelsService
-      .createModel(this.createModelForm.value as Model)
-      .then(() => {
-        this.router.navigate(["/admin"]);
-      });
+    const definitionSplitted: string[] = this.createModelForm.value[
+      "definition"
+    ].split("\n");
+    let definition = {};
+
+    for (const line of definitionSplitted) {
+      const lineSplitted = line.split(": ");
+      definition[lineSplitted[0]] = lineSplitted[1];
+    }
+
+    const model: Model = {
+      ...this.createModelForm.value,
+      definition,
+      lastUpdate: { seconds: Date.now() },
+    };
+
+    this.modelsService.createModel(model).then((modelRes) => {
+      console.log(modelRes);
+      //this.store.dispatch(createModel({ model }));
+      this.router.navigate(["/admin"]);
+    });
   }
 }

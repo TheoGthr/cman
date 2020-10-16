@@ -9,10 +9,11 @@ export class ModelsService {
   constructor(private firestore: AngularFirestore) {}
 
   getModelsNames() {
-    return this.firestore.collection("models").valueChanges();
+    return this.firestore.collection("models").snapshotChanges();
   }
 
   createModel(model: Model) {
+    const id = this.firestore.createId();
     return this.firestore.collection("models").add(model);
   }
 

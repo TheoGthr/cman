@@ -20,15 +20,13 @@ import * as fromModels from "../../ngrx/models.selectors";
       <div class="models">
         <mat-spinner *ngIf="!isModelsListLoaded"></mat-spinner>
         <div class="cards" *ngFor="let model of modelsList">
-          <mat-card class="example-card">
+          <mat-card>
             <mat-card-header>
               <mat-card-title>{{ model.type | titlecase }}</mat-card-title>
-              <mat-card-subtitle
-                >Last update:
-                {{
-                  model.lastUpdate.seconds * 1000 | date: "dd/MM/yy HH:mm"
-                }}</mat-card-subtitle
-              >
+              <mat-card-subtitle>
+                Last update:
+                {{ model.lastUpdate.seconds * 1000 | date: "dd/MM/yy HH:mm" }}
+              </mat-card-subtitle>
             </mat-card-header>
             <mat-card-actions class="action-buttons">
               <button

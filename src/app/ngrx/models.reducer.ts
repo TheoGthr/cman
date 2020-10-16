@@ -25,14 +25,14 @@ const _modelsReducer = createReducer(
     modelsList: state.modelsList.concat(model),
   })),
   on(updateModel, (state, { model }) => {
-    state.modelsList
-      .map(function (e: Model) {
-        return e.id;
-      })
-      .indexOf(model.id);
+    state.modelsList.map((e: Model) => e.id).indexOf(model.id);
     return { ...state, modelsList: [] };
   }),
-  on(deleteModel, (state, { modelId }) => ({ ...state, modelsList: [] }))
+  on(deleteModel, (state, { modelId }) => {
+    const index = state.modelsList.map((e: Model) => e.id).indexOf(modelId);
+    state.modelsList.splice(index, 1);
+    return { ...state };
+  })
 );
 
 export function modelsReducer(state: ModelsState | undefined, action: Action) {

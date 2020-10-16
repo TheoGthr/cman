@@ -81,13 +81,23 @@ export class CmanNavbarComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.modelsService.getModelsNames().subscribe((data) => {
-      this.modelsNames = data.map((e: any) => {
-        return {
-          ...e,
-        };
+    this.modelsService
+      .getModelsNames()
+      .pipe(
+        map((changes) =>
+          changes.map((c) => ({
+            id: c.payload.doc.id,
+            ...(c.payload.doc.data() as Model),
+          }))
+        )
+      )
+      .subscribe((data) => {
+        this.modelsNames = data.map((e: any) => {
+          return {
+            ...e,
+          };
+        });
+        this.store.dispatch(getModels({ modelsList: this.modelsNames }));
       });
-      this.store.dispatch(getModels({ modelsList: this.modelsNames }));
-    });
   }
 }
