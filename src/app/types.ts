@@ -5,6 +5,7 @@ export interface Horodate {
 
 export interface Model {
   id: string;
+  label: string;
   type: string;
   icon: string;
   lastUpdate: Horodate;

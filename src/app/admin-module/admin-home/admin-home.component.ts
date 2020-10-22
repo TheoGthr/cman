@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnChanges, OnInit } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Store } from "@ngrx/store";
 import { ConfirmDialogComponent } from "src/app/core-module/confirm-dialog/confirm-dialog.component";
@@ -22,7 +22,7 @@ import * as fromModels from "../../ngrx/models.selectors";
         <div class="cards" *ngFor="let model of modelsList">
           <mat-card>
             <mat-card-header>
-              <mat-card-title>{{ model.type | titlecase }}</mat-card-title>
+              <mat-card-title>{{ model.label | titlecase }}</mat-card-title>
               <mat-card-subtitle>
                 Last update:
                 {{ model.lastUpdate.seconds * 1000 | date: "dd/MM/yy HH:mm" }}
@@ -46,7 +46,7 @@ import * as fromModels from "../../ngrx/models.selectors";
     </div>
   `,
 })
-export class CmanAdminHomeComponent implements OnInit {
+export class CmanAdminHomeComponent implements OnInit, OnChanges {
   modelsList: Model[];
   isModelsListLoaded: boolean = false;
 
@@ -65,9 +65,21 @@ export class CmanAdminHomeComponent implements OnInit {
     });
   }
 
+  ngOnChanges(): void {
+    this.store.select(fromModels.getModelsLoaded).subscribe((isLoaded) => {
+      this.isModelsListLoaded = isLoaded;
+    });
+    this.store.select(fromModels.getModelsList).subscribe((modelsList) => {
+      this.modelsList = modelsList;
+    });
+  }
+
   onDelete(modelId: string) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: "Do you confirm the deletion?",
+      data: {
+        message: "Do you confirm the deletion?",
+        confirm: true,
+      },
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {

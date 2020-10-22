@@ -1,0 +1,17 @@
+.models {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 5%;
+}
+
+.container {
+  flex-direction: column;
+  margin-top: 3%;
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: space-around;
+}

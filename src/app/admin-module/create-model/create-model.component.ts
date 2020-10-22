@@ -1,7 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { MatDialog } from "@angular/material/dialog";
 import { Router } from "@angular/router";
 import { Store } from "@ngrx/store";
+import { ConfirmDialogComponent } from "src/app/core-module/confirm-dialog/confirm-dialog.component";
 import { createModel } from "src/app/ngrx/models.actions";
 import { ModelsService } from "src/app/services/models.service";
 import { Model } from "src/app/types";
@@ -16,6 +18,10 @@ import { Model } from "src/app/types";
         [formGroup]="createModelForm"
         (ngSubmit)="onSubmit()"
       >
+        <mat-form-field class="form-full-width" appearance="fill">
+          <mat-label>Model label</mat-label>
+          <input matInput formControlName="label" placeholder="Ex. Comics" />
+        </mat-form-field>
         <mat-form-field class="form-full-width" appearance="fill">
           <mat-label>Model type</mat-label>
           <input matInput formControlName="type" placeholder="Ex. comics" />
@@ -53,9 +59,11 @@ export class CmanCreateModelComponent {
     private fb: FormBuilder,
     private modelsService: ModelsService,
     private router: Router,
-    private store: Store
+    private store: Store,
+    public dialog: MatDialog
   ) {
     this.createModelForm = this.fb.group({
+      label: ["", Validators.required],
       type: ["", Validators.required],
       icon: ["", Validators.required],
       definition: ["", Validators.required],
@@ -69,22 +77,34 @@ export class CmanCreateModelComponent {
       "definition"
     ].split("\n");
     let definition = {};
+    let isIncorrect = false;
 
     for (const line of definitionSplitted) {
       const lineSplitted = line.split(": ");
-      definition[lineSplitted[0]] = lineSplitted[1];
+      if (lineSplitted[1]) {
+        definition[lineSplitted[0]] = lineSplitted[1];
+      } else {
+        isIncorrect = true;
+      }
     }
 
-    const model: Model = {
-      ...this.createModelForm.value,
-      definition,
-      lastUpdate: { seconds: Date.now() },
-    };
+    if (isIncorrect) {
+      this.dialog.open(ConfirmDialogComponent, {
+        data: {
+          message: "Some fields are not correct",
+        },
+      });
+    } else {
+      const model: Model = {
+        ...this.createModelForm.value,
+        definition,
+        lastUpdate: this.modelsService.updateTimestamp(),
+      };
 
-    this.modelsService.createModel(model).then((modelRes) => {
-      console.log(modelRes);
-      //this.store.dispatch(createModel({ model }));
-      this.router.navigate(["/admin"]);
-    });
+      this.modelsService.createModel(model).then((modelRes) => {
+        this.store.dispatch(createModel({ model }));
+        this.router.navigate(["/admin"]);
+      });
+    }
   }
 }

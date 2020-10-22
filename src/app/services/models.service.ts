@@ -1,5 +1,11 @@
 import { Injectable } from "@angular/core";
-import { AngularFirestore } from "@angular/fire/firestore";
+import {
+  AngularFirestore,
+  DocumentChangeAction,
+  DocumentReference,
+} from "@angular/fire/firestore";
+import * as firebase from "firebase";
+import { Observable } from "rxjs";
 import { Model } from "../types";
 
 @Injectable({
@@ -8,21 +14,23 @@ import { Model } from "../types";
 export class ModelsService {
   constructor(private firestore: AngularFirestore) {}
 
-  getModelsNames() {
+  getModelsNames(): Observable<DocumentChangeAction<any>[]> {
     return this.firestore.collection("models").snapshotChanges();
   }
 
-  createModel(model: Model) {
-    const id = this.firestore.createId();
+  createModel(model: Model): Promise<DocumentReference> {
     return this.firestore.collection("models").add(model);
   }
 
-  updateModel(model: Model) {
-    model.lastUpdate.seconds = Date.now();
-    this.firestore.doc("models/" + model.id).update(model);
+  updateModel(model: Model): Promise<void> {
+    return this.firestore.doc("models/" + model.id).update(model);
   }
 
-  deleteModel(modelId: string) {
+  deleteModel(modelId: string): any {
     return this.firestore.doc("models/" + modelId).delete();
+  }
+
+  updateTimestamp(): any {
+    return firebase.firestore.FieldValue.serverTimestamp();
   }
 }

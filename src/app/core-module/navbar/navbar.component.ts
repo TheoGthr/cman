@@ -41,7 +41,7 @@ import { Model } from "../../types";
             routerLinkActive="active"
           >
             <mat-icon aria-label="Movies icon">{{ modelName.icon }}</mat-icon>
-            {{ modelName.type | titlecase }}
+            {{ modelName.label }}
           </a>
         </mat-nav-list>
       </mat-sidenav>
