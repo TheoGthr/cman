@@ -9,7 +9,7 @@ export interface Model {
   type: string;
   icon: string;
   lastUpdate: Horodate;
-  definition: any;
+  definition: { [key: string]: any };
 }
 
 export interface ModelsState {

@@ -37,7 +37,7 @@ import { Model } from "../../types";
         <mat-nav-list *ngFor="let modelName of modelsNames">
           <a
             mat-list-item
-            [routerLink]="[modelName.type]"
+            [routerLink]="['ct', modelName.type]"
             routerLinkActive="active"
           >
             <mat-icon aria-label="Movies icon">{{ modelName.icon }}</mat-icon>

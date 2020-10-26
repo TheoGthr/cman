@@ -20,12 +20,11 @@ const _modelsReducer = createReducer(
     modelsList: modelsList,
     isLoaded: true,
   })),
-  on(createModel, (state, { model }) => ({
+  on(createModel, (state) => ({
     ...state,
-    modelsList: state.modelsList.concat(model),
+    modelsList: [],
   })),
-  on(updateModel, (state, { model }) => {
-    state.modelsList.map((e: Model) => e.id).indexOf(model.id);
+  on(updateModel, (state) => {
     return { ...state, modelsList: [] };
   }),
   on(deleteModel, (state, { modelId }) => {

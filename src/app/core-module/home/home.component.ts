@@ -20,7 +20,7 @@ import * as fromModels from "../../ngrx/models.selectors";
               <button
                 mat-raised-button
                 color="primary"
-                [routerLink]="['/', model.type]"
+                [routerLink]="['/', 'ct', model.type]"
                 routerLinkActive="active"
               >
                 Go!

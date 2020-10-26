@@ -23,7 +23,9 @@ export class ModelsService {
   }
 
   updateModel(model: Model): Promise<void> {
-    return this.firestore.doc("models/" + model.id).update(model);
+    const modelId = model.id;
+    delete model.id;
+    return this.firestore.doc("models/" + modelId).update(model);
   }
 
   deleteModel(modelId: string): any {

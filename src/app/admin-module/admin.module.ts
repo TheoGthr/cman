@@ -8,6 +8,7 @@ import { CmanCreateModelComponent } from "./create-model/create-model.component"
 import { MaterialModule } from "../material.module";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
+import { CmanUpdateModelComponent } from "./update-model/update-model.component";
 
 const routes: Routes = [
   {
@@ -20,6 +21,7 @@ const routes: Routes = [
     component: CmanAdminHomeComponent,
   },
   { path: "new", component: CmanCreateModelComponent },
+  { path: "update", component: CmanUpdateModelComponent },
 ];
 
 @NgModule({
@@ -27,6 +29,7 @@ const routes: Routes = [
     CmanAdminComponent,
     CmanAdminHomeComponent,
     CmanCreateModelComponent,
+    CmanUpdateModelComponent,
   ],
   imports: [
     CommonModule,

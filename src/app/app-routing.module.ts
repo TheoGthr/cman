@@ -11,6 +11,11 @@ const routes: Routes = [
     loadChildren: () =>
       import(`./admin-module/admin.module`).then((m) => m.AdminModule),
   }, // canActivate: [AuthGuard] }
+  {
+    path: "ct",
+    loadChildren: () =>
+      import(`./content-module/content.module`).then((m) => m.ContentModule),
+  },
   { path: "home", component: CmanHomeComponent },
   { path: "", redirectTo: "/home", pathMatch: "full" },
   { path: "**", component: CmanNotFoundComponent },

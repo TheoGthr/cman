@@ -1,21 +1,22 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { ConfirmDialogComponent } from "src/app/core-module/confirm-dialog/confirm-dialog.component";
-import { createModel } from "src/app/ngrx/models.actions";
+import { createModel, updateModel } from "src/app/ngrx/models.actions";
 import { ModelsService } from "src/app/services/models.service";
 import { Model } from "src/app/types";
+import * as fromModels from "../../ngrx/models.selectors";
 
 @Component({
-  selector: "cman-create-model",
-  styleUrls: ["./create-model.component.scss"],
+  selector: "cman-update-model",
+  styleUrls: ["./update-model.component.scss"],
   template: `
     <div class="container">
       <form
-        class="create-form"
-        [formGroup]="createModelForm"
+        class="update-form"
+        [formGroup]="updateModelForm"
         (ngSubmit)="onSubmit()"
       >
         <mat-form-field class="form-full-width" appearance="fill">
@@ -44,36 +45,54 @@ import { Model } from "src/app/types";
           color="primary"
           type="submit"
           id="submit-model"
-          [disabled]="!createModelForm.valid"
+          [disabled]="!updateModelForm.valid"
         >
-          Create
+          Update
         </button>
       </form>
     </div>
   `,
 })
-export class CmanCreateModelComponent {
-  createModelForm: FormGroup;
+export class CmanUpdateModelComponent implements OnInit {
+  updateModelForm: FormGroup;
+  id: string;
 
   constructor(
     private fb: FormBuilder,
     private modelsService: ModelsService,
     private router: Router,
+    private route: ActivatedRoute,
     private store: Store,
     public dialog: MatDialog
-  ) {
-    this.createModelForm = this.fb.group({
-      label: ["", Validators.required],
-      type: ["", Validators.required],
-      icon: ["", Validators.required],
-      definition: ["", Validators.required],
+  ) {}
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      this.id = params.id;
+
+      this.store
+        .select(fromModels.getModelById, this.id)
+        .subscribe((model: Model) => {
+          const definitionJson: any = model.definition;
+          let definitionStr: string = "";
+
+          for (const ppt in definitionJson) {
+            definitionStr += `${ppt}: ${definitionJson[ppt]}\n`;
+          }
+          definitionStr = definitionStr.slice(0, -1);
+
+          this.updateModelForm = this.fb.group({
+            label: [model.label, Validators.required],
+            type: [model.type, Validators.required],
+            icon: [model.icon, Validators.required],
+            definition: [definitionStr, Validators.required],
+          });
+        });
     });
   }
 
-  // verify model name does not already exist
-
-  public onSubmit() {
-    const definitionSplitted: string[] = this.createModelForm.value[
+  onSubmit() {
+    const definitionSplitted: string[] = this.updateModelForm.value[
       "definition"
     ].split("\n");
     let definition = {};
@@ -96,13 +115,13 @@ export class CmanCreateModelComponent {
       });
     } else {
       const model: Model = {
-        ...this.createModelForm.value,
+        ...this.updateModelForm.value,
+        id: this.id,
         definition,
         lastUpdate: this.modelsService.updateTimestamp(),
       };
-
-      this.modelsService.createModel(model).then((modelRes) => {
-        this.store.dispatch(createModel());
+      this.modelsService.updateModel(model).then((modelRes) => {
+        this.store.dispatch(updateModel());
         this.router.navigate(["/admin"]);
       });
     }

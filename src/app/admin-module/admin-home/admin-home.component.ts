@@ -22,7 +22,7 @@ import * as fromModels from "../../ngrx/models.selectors";
         <div class="cards" *ngFor="let model of modelsList">
           <mat-card>
             <mat-card-header>
-              <mat-card-title>{{ model.label | titlecase }}</mat-card-title>
+              <mat-card-title>{{ model.label }}</mat-card-title>
               <mat-card-subtitle>
                 Last update:
                 {{ model.lastUpdate.seconds * 1000 | date: "dd/MM/yy HH:mm" }}
@@ -36,7 +36,12 @@ import * as fromModels from "../../ngrx/models.selectors";
               >
                 Delete
               </button>
-              <button mat-raised-button color="primary" (click)="([model.id])">
+              <button
+                mat-raised-button
+                color="primary"
+                routerLink="/admin/update"
+                [queryParams]="{ id: model.id }"
+              >
                 Update
               </button>
             </mat-card-actions>
@@ -88,7 +93,7 @@ export class CmanAdminHomeComponent implements OnInit, OnChanges {
           .then(() => {
             this.store.dispatch(deleteModel({ modelId }));
           })
-          .catch((e) => console.log(e));
+          .catch((e) => console.error(e));
       }
     });
   }
