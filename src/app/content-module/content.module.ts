@@ -8,6 +8,7 @@ import { MaterialModule } from "../material.module";
 import { AuthService } from "../services/auth.service";
 import { ModelsService } from "../services/models.service";
 import { CmanContentListComponent } from "./content-list/content-list.component";
+import { CmanCreateContentComponent } from "./create-content/create-content.component";
 
 const routes: Routes = [
   {
@@ -19,10 +20,14 @@ const routes: Routes = [
     path: ":model",
     component: CmanContentListComponent,
   },
+  {
+    path: ":model/new",
+    component: CmanCreateContentComponent,
+  },
 ];
 
 @NgModule({
-  declarations: [CmanContentListComponent],
+  declarations: [CmanContentListComponent, CmanCreateContentComponent],
   imports: [
     CommonModule,
     MaterialModule,

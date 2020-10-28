@@ -3,6 +3,10 @@ import { ActivatedRoute, Params } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { Model } from "src/app/types";
 import * as fromModels from "../../ngrx/models.selectors";
+import * as fromContent from "../../ngrx/content.selectors";
+import { ContentService } from "src/app/services/content.service";
+import { map } from "rxjs/operators";
+import { getContentList } from "src/app/ngrx/content.actions";
 
 @Component({
   selector: "content-list",
@@ -13,6 +17,15 @@ import * as fromModels from "../../ngrx/models.selectors";
         <h1>{{ model.label }}</h1>
         <button mat-raised-button color="primary" routerLink="new">New</button>
       </div>
+      <mat-form-field>
+        <mat-label>Filter</mat-label>
+        <input
+          matInput
+          (keyup)="applyFilter($event)"
+          placeholder="Ex. ium"
+          #input
+        />
+      </mat-form-field>
       <div class="mat-elevation-z8">
         <table mat-table [dataSource]="contentList">
           <ng-container
@@ -29,6 +42,13 @@ import * as fromModels from "../../ngrx/models.selectors";
             *matHeaderRowDef="displayedColumns; sticky: true"
           ></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+          <!-- Row shown when there is no matching data. -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4">
+              No data matching the filter "{{ input.value }}"
+            </td>
+          </tr>
         </table>
       </div>
     </div>
@@ -40,49 +60,45 @@ export class CmanContentListComponent implements OnInit {
   contentList;
   displayedColumns: string[];
 
-  constructor(private route: ActivatedRoute, private store: Store) {
+  constructor(
+    private contentService: ContentService,
+    private route: ActivatedRoute,
+    private store: Store
+  ) {
     this.route.params.subscribe((params: Params) => {
       this.modelType = params.model;
       this.store
         .select(fromModels.getModelByType, this.modelType)
         .subscribe((model: Model) => {
+          this.model = model;
           this.displayedColumns = Object.keys(model.definition);
         });
     });
-    this.contentList = [
-      {
-        title: "12 angry men",
-        year: 1983,
-        producers: ["?"],
-        actors: ["Henry Fonda"],
-        size: "2Go",
-      },
-      {
-        title: "Toy Story",
-        producers: ["?"],
-        year: 2003,
-        actors: ["Toys"],
-        size: "1.23Go",
-      },
-      {
-        title: "Pinocchio",
-        producers: ["?"],
-        year: 1962,
-        actors: ["Planks"],
-        size: "600Mo",
-      },
-    ];
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      //if model exists ?
-      this.modelType = params.model;
-      this.store
-        .select(fromModels.getModelByType, this.modelType)
-        .subscribe((model) => {
-          this.model = model;
+    this.contentService
+      .getContentByType(this.modelType)
+      .pipe(
+        map((changes) =>
+          changes.map((c) => ({
+            id: c.payload.doc.id,
+            ...c.payload.doc.data(),
+          }))
+        )
+      )
+      .subscribe((data) => {
+        this.contentList = data.map((e: any) => {
+          return {
+            ...e,
+          };
         });
-    });
+        this.store.dispatch(getContentList({ contentList: this.contentList }));
+      });
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.contentList.filter = filterValue.trim().toLowerCase();
   }
 }

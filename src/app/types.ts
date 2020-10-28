@@ -17,6 +17,12 @@ export interface ModelsState {
   isLoaded: boolean;
 }
 
+export interface ContentState {
+  contentList: any[];
+  isLoaded: boolean;
+}
+
 export interface AppState {
   models: ModelsState;
+  content: ContentState;
 }
