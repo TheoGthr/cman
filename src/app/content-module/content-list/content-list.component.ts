@@ -7,6 +7,7 @@ import * as fromContent from "../../ngrx/content.selectors";
 import { ContentService } from "src/app/services/content.service";
 import { map } from "rxjs/operators";
 import { getContentList } from "src/app/ngrx/content.actions";
+import { Utils } from "src/app/utils";
 
 @Component({
   selector: "content-list",
@@ -71,7 +72,7 @@ export class CmanContentListComponent implements OnInit {
         .select(fromModels.getModelByType, this.modelType)
         .subscribe((model: Model) => {
           this.model = model;
-          this.displayedColumns = Object.keys(model.definition);
+          this.displayedColumns = Utils.getDefinitionArray(model.definition);
         });
     });
   }

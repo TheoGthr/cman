@@ -4,9 +4,10 @@ import { MatDialog } from "@angular/material/dialog";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { ConfirmDialogComponent } from "src/app/core-module/confirm-dialog/confirm-dialog.component";
-import { createModel, updateModel } from "src/app/ngrx/models.actions";
+import { updateModel } from "src/app/ngrx/models.actions";
 import { ModelsService } from "src/app/services/models.service";
 import { Model } from "src/app/types";
+import { Utils } from "src/app/utils";
 import * as fromModels from "../../ngrx/models.selectors";
 
 @Component({
@@ -73,13 +74,9 @@ export class CmanUpdateModelComponent implements OnInit {
       this.store
         .select(fromModels.getModelById, this.id)
         .subscribe((model: Model) => {
-          const definitionJson: any = model.definition;
-          let definitionStr: string = "";
-
-          for (const ppt in definitionJson) {
-            definitionStr += `${ppt}: ${definitionJson[ppt]}\n`;
-          }
-          definitionStr = definitionStr.slice(0, -1);
+          const definitionStr = Utils.getDefinitionString(
+            Utils.sortObj(model.definition)
+          );
 
           this.updateModelForm = this.fb.group({
             label: [model.label, Validators.required],
@@ -92,20 +89,10 @@ export class CmanUpdateModelComponent implements OnInit {
   }
 
   onSubmit() {
-    const definitionSplitted: string[] = this.updateModelForm.value[
-      "definition"
-    ].split("\n");
-    let definition = {};
-    let isIncorrect = false;
-
-    for (const line of definitionSplitted) {
-      const lineSplitted = line.split(": ");
-      if (lineSplitted[1]) {
-        definition[lineSplitted[0]] = lineSplitted[1];
-      } else {
-        isIncorrect = true;
-      }
-    }
+    Utils.sortObj({});
+    const { isIncorrect, definition } = Utils.getDefinitionObject(
+      this.updateModelForm.value["definition"]
+    );
 
     if (isIncorrect) {
       this.dialog.open(ConfirmDialogComponent, {

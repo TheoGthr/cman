@@ -7,6 +7,7 @@ import { ConfirmDialogComponent } from "src/app/core-module/confirm-dialog/confi
 import { createModel } from "src/app/ngrx/models.actions";
 import { ModelsService } from "src/app/services/models.service";
 import { Model } from "src/app/types";
+import { Utils } from "src/app/utils";
 
 @Component({
   selector: "cman-create-model",
@@ -73,20 +74,9 @@ export class CmanCreateModelComponent {
   // verify model name does not already exist
 
   public onSubmit() {
-    const definitionSplitted: string[] = this.createModelForm.value[
-      "definition"
-    ].split("\n");
-    let definition = {};
-    let isIncorrect = false;
-
-    for (const line of definitionSplitted) {
-      const lineSplitted = line.split(": ");
-      if (lineSplitted[1]) {
-        definition[lineSplitted[0]] = lineSplitted[1];
-      } else {
-        isIncorrect = true;
-      }
-    }
+    const { isIncorrect, definition } = Utils.getDefinitionObject(
+      this.createModelForm.value["definition"]
+    );
 
     if (isIncorrect) {
       this.dialog.open(ConfirmDialogComponent, {
