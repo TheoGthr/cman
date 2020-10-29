@@ -9,6 +9,7 @@ import { AuthService } from "../services/auth.service";
 import { ModelsService } from "../services/models.service";
 import { CmanContentListComponent } from "./content-list/content-list.component";
 import { CmanCreateContentComponent } from "./create-content/create-content.component";
+import { CmanUpdateContentComponent } from "./update-content/update-content.component";
 
 const routes: Routes = [
   {
@@ -24,10 +25,18 @@ const routes: Routes = [
     path: ":model/new",
     component: CmanCreateContentComponent,
   },
+  {
+    path: ":model/update",
+    component: CmanUpdateContentComponent,
+  },
 ];
 
 @NgModule({
-  declarations: [CmanContentListComponent, CmanCreateContentComponent],
+  declarations: [
+    CmanContentListComponent,
+    CmanCreateContentComponent,
+    CmanUpdateContentComponent,
+  ],
   imports: [
     CommonModule,
     MaterialModule,

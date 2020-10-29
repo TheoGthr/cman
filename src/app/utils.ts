@@ -1,5 +1,5 @@
 export class Utils {
-  static sortObj(obj) {
+  static sortObj(obj): any {
     return Object.keys(obj)
       .sort()
       .reduce(function (result, key) {
@@ -8,7 +8,9 @@ export class Utils {
       }, {});
   }
 
-  static getDefinitionObject(formValue: any) {
+  static getDefinitionObject(
+    formValue: any
+  ): { isIncorrect: boolean; definition: any } {
     const definitionSplitted: string[] = formValue.split("\n");
     let definition = {};
     let isIncorrect = false;
@@ -27,16 +29,20 @@ export class Utils {
     return { isIncorrect, definition };
   }
 
-  static getDefinitionString(definition: any) {
+  static getDefinitionString(definition: any): string {
     let definitionStr: string = "";
 
     for (const ppt in definition) {
       definitionStr += `${ppt.slice(2)}: ${definition[ppt]}\n`;
     }
-    return (definitionStr = definitionStr.slice(0, -1));
+    return definitionStr.slice(0, -1);
   }
 
-  static getDefinitionArray(definition: any) {
-    return Object.keys(Utils.sortObj(definition)).map((col) => col.slice(2));
+  static getDefinitionArray(definition: any): any[] {
+    return Object.keys(Utils.sortObj(definition));
+  }
+
+  static getSlicedDefField(field: string): string {
+    return field.slice(2);
   }
 }

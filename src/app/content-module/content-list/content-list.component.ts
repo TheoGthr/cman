@@ -72,7 +72,9 @@ export class CmanContentListComponent implements OnInit {
         .select(fromModels.getModelByType, this.modelType)
         .subscribe((model: Model) => {
           this.model = model;
-          this.displayedColumns = Utils.getDefinitionArray(model.definition);
+          this.displayedColumns = Utils.getDefinitionArray(
+            model.definition
+          ).map((col) => col.slice(2));
         });
     });
   }

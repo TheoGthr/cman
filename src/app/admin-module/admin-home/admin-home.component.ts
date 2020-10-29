@@ -16,6 +16,9 @@ import * as fromModels from "../../ngrx/models.selectors";
         <button mat-raised-button color="primary" routerLink="/admin/new">
           New model
         </button>
+        <button mat-raised-button color="accent" routerLink="/admin/inject">
+          Inject data
+        </button>
       </div>
       <div class="models">
         <mat-spinner *ngIf="!isModelsListLoaded"></mat-spinner>
@@ -38,7 +41,7 @@ import * as fromModels from "../../ngrx/models.selectors";
               </button>
               <button
                 mat-raised-button
-                color="primary"
+                color="accent"
                 routerLink="/admin/update"
                 [queryParams]="{ id: model.id }"
               >

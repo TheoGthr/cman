@@ -10,19 +10,60 @@ import { MatDialog } from "@angular/material/dialog";
 import { Utils } from "src/app/utils";
 
 @Component({
-  selector: "content-list",
+  selector: "create-content",
   styleUrls: ["./create-content.component.scss"],
   template: `
-    <div class="container">
+    <div class="form-container">
+      <div>
+        <h1>New {{ model.type }}</h1>
+      </div>
       <form
         class="create-form"
         [formGroup]="createContentForm"
         (ngSubmit)="onSubmit()"
       >
         <div *ngFor="let field of fields">
-          <mat-form-field class="form-full-width" appearance="fill">
-            <mat-label>{{ field | titlecase }}</mat-label>
-            <input matInput [formControlName]="field" placeholder="" />
+          <!-- String -->
+          <mat-form-field
+            *ngIf="model.definition[field] === 'string'"
+            class="form-full-width"
+            appearance="fill"
+          >
+            <mat-label>{{ getSlicedField(field) | titlecase }}</mat-label>
+            <input
+              matInput
+              [formControlName]="getSlicedField(field)"
+              placeholder=""
+            />
+          </mat-form-field>
+
+          <!-- Number -->
+          <mat-form-field
+            *ngIf="model.definition[field] === 'number'"
+            class="form-full-width"
+            appearance="fill"
+          >
+            <mat-label>{{ getSlicedField(field) | titlecase }}</mat-label>
+            <input
+              matInput
+              [formControlName]="getSlicedField(field)"
+              placeholder=""
+              type="number"
+            />
+          </mat-form-field>
+
+          <!-- String[] -->
+          <mat-form-field
+            *ngIf="model.definition[field] === 'string[]'"
+            class="form-full-width"
+            appearance="fill"
+          >
+            <mat-label>{{ getSlicedField(field) | titlecase }}</mat-label>
+            <textarea
+              matInput
+              [formControlName]="getSlicedField(field)"
+              placeholder=""
+            ></textarea>
           </mat-form-field>
         </div>
         <button
@@ -66,15 +107,16 @@ export class CmanCreateContentComponent implements OnInit {
           this.fields = Utils.getDefinitionArray(model.definition);
           const group = {};
           this.fields.forEach((field) => {
-            group[field] = ["", Validators.required];
+            group[this.getSlicedField(field)] = ["", Validators.required];
           });
+          group["type"] = [this.modelType, Validators.required];
 
           this.createContentForm = this.fb.group(group);
         });
     });
   }
 
-  public onSubmit() {
+  onSubmit() {
     const content = {
       ...this.createContentForm.value,
       lastUpdate: this.contentService.updateTimestamp(),
@@ -82,7 +124,11 @@ export class CmanCreateContentComponent implements OnInit {
 
     this.contentService.createContent(content).then((modelRes) => {
       this.store.dispatch(createContent());
-      this.router.navigate(["/admin"]);
+      this.router.navigate(["/ct/" + this.modelType]);
     });
+  }
+
+  getSlicedField(field: string): string {
+    return Utils.getSlicedDefField(field);
   }
 }
