@@ -91,8 +91,7 @@ export class CmanCreateModelComponent {
         lastUpdate: this.modelsService.updateTimestamp(),
       };
 
-      this.modelsService.createModel(model).then((modelRes) => {
-        this.store.dispatch(createModel());
+      this.modelsService.createModel(model).finally(() => {
         this.router.navigate(["/admin"]);
       });
     }

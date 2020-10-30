@@ -107,8 +107,7 @@ export class CmanUpdateModelComponent implements OnInit {
         definition,
         lastUpdate: this.modelsService.updateTimestamp(),
       };
-      this.modelsService.updateModel(model).then((modelRes) => {
-        this.store.dispatch(updateModel());
+      this.modelsService.updateModel(model).then(() => {
         this.router.navigate(["/admin"]);
       });
     }

@@ -80,24 +80,7 @@ export class CmanContentListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.contentService
-      .getContentByType(this.modelType)
-      .pipe(
-        map((changes) =>
-          changes.map((c) => ({
-            id: c.payload.doc.id,
-            ...c.payload.doc.data(),
-          }))
-        )
-      )
-      .subscribe((data) => {
-        this.contentList = data.map((e: any) => {
-          return {
-            ...e,
-          };
-        });
-        this.store.dispatch(getContentList({ contentList: this.contentList }));
-      });
+    this.contentList = this.contentService.getContentByType(this.modelType);
   }
 
   applyFilter(event: Event) {

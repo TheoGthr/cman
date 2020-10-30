@@ -12,6 +12,10 @@ export interface Model {
   definition: { [key: string]: any };
 }
 
+export interface Content {
+  [key: string]: any;
+}
+
 export interface ModelsState {
   modelsList: Model[];
   isLoaded: boolean;

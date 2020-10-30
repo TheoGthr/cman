@@ -85,8 +85,7 @@ export class CmanUpdateContentComponent implements OnInit {
       lastUpdate: this.contentService.updateTimestamp(),
     };
 
-    this.contentService.createContent(content).then((modelRes) => {
-      this.store.dispatch(createContent());
+    this.contentService.createContent(content).finally(() => {
       this.router.navigate(["/ct/" + this.modelType]);
     });
   }

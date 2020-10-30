@@ -91,12 +91,7 @@ export class CmanAdminHomeComponent implements OnInit, OnChanges {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.modelsService
-          .deleteModel(modelId)
-          .then(() => {
-            this.store.dispatch(deleteModel({ modelId }));
-          })
-          .catch((e) => console.error(e));
+        this.modelsService.deleteModel(modelId);
       }
     });
   }

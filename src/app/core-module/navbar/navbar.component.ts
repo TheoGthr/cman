@@ -34,7 +34,7 @@ import { Model } from "../../types";
           </a>
         </mat-nav-list>
         <mat-divider></mat-divider>
-        <mat-nav-list *ngFor="let modelName of modelsNames">
+        <mat-nav-list *ngFor="let modelName of modelList">
           <a
             mat-list-item
             [routerLink]="['ct', modelName.type]"
@@ -64,7 +64,7 @@ import { Model } from "../../types";
   `,
 })
 export class CmanNavbarComponent implements OnInit {
-  modelsNames: any[];
+  modelList: any[];
 
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
@@ -81,23 +81,6 @@ export class CmanNavbarComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.modelsService
-      .getModelsNames()
-      .pipe(
-        map((changes) =>
-          changes.map((c) => ({
-            id: c.payload.doc.id,
-            ...(c.payload.doc.data() as Model),
-          }))
-        )
-      )
-      .subscribe((data) => {
-        this.modelsNames = data.map((e: any) => {
-          return {
-            ...e,
-          };
-        });
-        this.store.dispatch(getModels({ modelsList: this.modelsNames }));
-      });
+    this.modelList = this.modelsService.getModelList();
   }
 }
