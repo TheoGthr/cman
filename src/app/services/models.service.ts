@@ -6,9 +6,8 @@ import * as firebase from "firebase";
 import {
   createModel,
   deleteModel,
-  getModels,
   updateModel,
-} from "../ngrx/models.actions";
+} from "../ngrx/models/models.actions";
 import { Model } from "../types";
 
 @Injectable({
@@ -17,10 +16,8 @@ import { Model } from "../types";
 export class ModelsService {
   constructor(private firestore: AngularFirestore, private store: Store) {}
 
-  getModelList(): Model[] {
-    let models: Model[];
-
-    this.firestore
+  getModels() {
+    return this.firestore
       .collection("models")
       .snapshotChanges()
       .pipe(
@@ -30,16 +27,7 @@ export class ModelsService {
             ...(c.payload.doc.data() as Model),
           }))
         )
-      )
-      .subscribe((data) => {
-        models = data.map((e: Model) => {
-          return {
-            ...e,
-          };
-        });
-        this.store.dispatch(getModels({ modelsList: models }));
-      });
-    return models;
+      );
   }
 
   createModel(model: Model): Promise<void> {

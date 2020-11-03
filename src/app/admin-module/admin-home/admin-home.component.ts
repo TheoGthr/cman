@@ -2,10 +2,9 @@ import { Component, OnChanges, OnInit } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Store } from "@ngrx/store";
 import { ConfirmDialogComponent } from "src/app/core-module/confirm-dialog/confirm-dialog.component";
-import { deleteModel } from "src/app/ngrx/models.actions";
 import { ModelsService } from "src/app/services/models.service";
 import { Model } from "src/app/types";
-import * as fromModels from "../../ngrx/models.selectors";
+import * as fromModels from "src/app/ngrx/models/models.selectors";
 
 @Component({
   selector: "cman-admin-home",
@@ -68,7 +67,7 @@ export class CmanAdminHomeComponent implements OnInit, OnChanges {
     this.store.select(fromModels.getModelsLoaded).subscribe((isLoaded) => {
       this.isModelsListLoaded = isLoaded;
     });
-    this.store.select(fromModels.getModelsList).subscribe((modelsList) => {
+    this.store.select(fromModels.getAllModels).subscribe((modelsList) => {
       this.modelsList = modelsList;
     });
   }
@@ -77,7 +76,7 @@ export class CmanAdminHomeComponent implements OnInit, OnChanges {
     this.store.select(fromModels.getModelsLoaded).subscribe((isLoaded) => {
       this.isModelsListLoaded = isLoaded;
     });
-    this.store.select(fromModels.getModelsList).subscribe((modelsList) => {
+    this.store.select(fromModels.getAllModels).subscribe((modelsList) => {
       this.modelsList = modelsList;
     });
   }

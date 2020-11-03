@@ -17,7 +17,7 @@ export interface Content {
 }
 
 export interface ModelsState {
-  modelsList: Model[];
+  models: Model[];
   isLoaded: boolean;
 }
 

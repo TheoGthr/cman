@@ -4,9 +4,10 @@ import { Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { Observable } from "rxjs";
 import { map, shareReplay } from "rxjs/operators";
-import { getModels } from "src/app/ngrx/models.actions";
+import { loadModelsPending } from "src/app/ngrx/models/models.actions";
 import { ModelsService } from "../../services/models.service";
 import { Model } from "../../types";
+import { getAllModels } from "src/app/ngrx/models/models.selectors";
 
 @Component({
   selector: "cman-navbar",
@@ -64,7 +65,7 @@ import { Model } from "../../types";
   `,
 })
 export class CmanNavbarComponent implements OnInit {
-  modelList: any[];
+  modelList: Model[];
 
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
@@ -81,6 +82,9 @@ export class CmanNavbarComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.modelList = this.modelsService.getModelList();
+    this.store.dispatch(loadModelsPending());
+    this.store.select(getAllModels).subscribe((models: Model[]) => {
+      this.modelList = models;
+    });
   }
 }

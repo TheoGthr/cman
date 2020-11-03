@@ -1,22 +1,22 @@
 import { createSelector } from "@ngrx/store";
-import { ModelsState, AppState } from "../types";
+import { ModelsState, AppState } from "src/app/types";
 
 export const selectModels = (state: AppState) => state.models;
 
-export const getModelsList = createSelector(
+export const getAllModels = createSelector(
   selectModels,
-  (state: ModelsState) => state.modelsList
+  (state: ModelsState) => state.models
 );
 
 export const getModelByType = createSelector(
   selectModels,
   (state: ModelsState, type: string) =>
-    state.modelsList.find((p) => p.type === type)
+    state.models.find((p) => p.type === type)
 );
 
 export const getModelById = createSelector(
   selectModels,
-  (state: ModelsState, id: string) => state.modelsList.find((p) => p.id === id)
+  (state: ModelsState, id: string) => state.models.find((p) => p.id === id)
 );
 
 export const getModelsLoaded = createSelector(

@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { Model } from "src/app/types";
-import * as fromModels from "../../ngrx/models.selectors";
+import * as fromModels from "src/app/ngrx/models/models.selectors";
 
 @Component({
   selector: "cman-home",
@@ -42,7 +42,7 @@ export class CmanHomeComponent implements OnInit {
     this.store.select(fromModels.getModelsLoaded).subscribe((isLoaded) => {
       this.isModelsListLoaded = isLoaded;
     });
-    this.store.select(fromModels.getModelsList).subscribe((modelsList) => {
+    this.store.select(fromModels.getAllModels).subscribe((modelsList) => {
       this.modelsList = modelsList;
     });
   }
@@ -51,7 +51,7 @@ export class CmanHomeComponent implements OnInit {
     this.store.select(fromModels.getModelsLoaded).subscribe((isLoaded) => {
       this.isModelsListLoaded = isLoaded;
     });
-    this.store.select(fromModels.getModelsList).subscribe((modelsList) => {
+    this.store.select(fromModels.getAllModels).subscribe((modelsList) => {
       this.modelsList = modelsList;
     });
   }

@@ -4,11 +4,10 @@ import { MatDialog } from "@angular/material/dialog";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { ConfirmDialogComponent } from "src/app/core-module/confirm-dialog/confirm-dialog.component";
-import { updateModel } from "src/app/ngrx/models.actions";
 import { ModelsService } from "src/app/services/models.service";
 import { Model } from "src/app/types";
 import { Utils } from "src/app/utils";
-import * as fromModels from "../../ngrx/models.selectors";
+import * as fromModels from "src/app/ngrx/models/models.selectors";
 
 @Component({
   selector: "cman-update-model",

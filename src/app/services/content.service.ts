@@ -8,7 +8,7 @@ import {
   getContentList,
   deleteContent,
   updateContent,
-} from "../ngrx/content.actions";
+} from "../ngrx/content/content.actions";
 import { Content } from "../types";
 
 @Injectable({

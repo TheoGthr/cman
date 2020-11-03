@@ -1,5 +1,5 @@
 import { createSelector } from "@ngrx/store";
-import { ContentState, AppState } from "../types";
+import { ContentState, AppState } from "src/app/types";
 
 export const selectContent = (state: AppState) => state.content;
 

@@ -2,11 +2,11 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Params } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { Model } from "src/app/types";
-import * as fromModels from "../../ngrx/models.selectors";
-import * as fromContent from "../../ngrx/content.selectors";
+import * as fromModels from "src/app/ngrx/models/models.selectors";
+import * as fromContent from "src/app/ngrx/content/content.selectors";
 import { ContentService } from "src/app/services/content.service";
 import { map } from "rxjs/operators";
-import { getContentList } from "src/app/ngrx/content.actions";
+import { getContentList } from "src/app/ngrx/content/content.actions";
 import { Utils } from "src/app/utils";
 
 @Component({

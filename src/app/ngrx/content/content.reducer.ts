@@ -1,5 +1,5 @@
 import { Action, createReducer, on } from "@ngrx/store";
-import { ContentState } from "../types";
+import { ContentState } from "src/app/types";
 
 import {
   createContent,

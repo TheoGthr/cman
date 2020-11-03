@@ -4,7 +4,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { ConfirmDialogComponent } from "src/app/core-module/confirm-dialog/confirm-dialog.component";
-import { createModel } from "src/app/ngrx/models.actions";
+import { createModel } from "src/app/ngrx/models/models.actions";
 import { ModelsService } from "src/app/services/models.service";
 import { Model } from "src/app/types";
 import { Utils } from "src/app/utils";
