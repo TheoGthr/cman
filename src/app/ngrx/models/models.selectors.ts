@@ -3,6 +3,11 @@ import { ModelsState, AppState } from "src/app/types";
 
 export const selectModels = (state: AppState) => state.models;
 
+export const getModelsState = createSelector(
+  selectModels,
+  (state: ModelsState) => state
+);
+
 export const getAllModels = createSelector(
   selectModels,
   (state: ModelsState) => state.models
@@ -22,4 +27,9 @@ export const getModelById = createSelector(
 export const getModelsLoaded = createSelector(
   selectModels,
   (state: ModelsState) => state.isLoaded
+);
+
+export const getModelUploaded = createSelector(
+  selectModels,
+  (state: ModelsState) => state.isUpdated
 );

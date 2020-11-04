@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { Model } from "src/app/types";
+import { Model, ModelsState } from "src/app/types";
 import * as fromModels from "src/app/ngrx/models/models.selectors";
 
 @Component({
@@ -10,11 +10,16 @@ import * as fromModels from "src/app/ngrx/models/models.selectors";
     <div class="container">
       <div class="models">
         <mat-spinner *ngIf="!isModelsListLoaded"></mat-spinner>
+        <mat-card *ngIf="errorModels">
+          <mat-card-header>
+            <mat-card-title>Error</mat-card-title>
+            <mat-card-subtitle>Please reload the page</mat-card-subtitle>
+          </mat-card-header>
+        </mat-card>
         <div class="cards" *ngFor="let model of modelsList">
           <mat-card>
             <mat-card-header>
               <mat-card-title>{{ model.label }}</mat-card-title>
-              <mat-card-subtitle>Number of elements : </mat-card-subtitle>
             </mat-card-header>
             <mat-card-actions class="action-buttons">
               <button
@@ -34,25 +39,20 @@ import * as fromModels from "src/app/ngrx/models/models.selectors";
 })
 export class CmanHomeComponent implements OnInit {
   modelsList: Model[];
-  isModelsListLoaded: boolean = false;
+  isModelsListLoaded = false;
+  errorModels: Error;
 
   constructor(private store: Store) {}
 
   ngOnInit(): void {
-    this.store.select(fromModels.getModelsLoaded).subscribe((isLoaded) => {
-      this.isModelsListLoaded = isLoaded;
-    });
-    this.store.select(fromModels.getAllModels).subscribe((modelsList) => {
-      this.modelsList = modelsList;
-    });
+    this.store
+      .select(fromModels.getModelsState)
+      .subscribe((state: ModelsState) => {
+        this.isModelsListLoaded = state.isLoaded;
+        this.modelsList = state.models;
+        this.errorModels = state.error;
+      });
   }
 
-  ngOnChanges(): void {
-    this.store.select(fromModels.getModelsLoaded).subscribe((isLoaded) => {
-      this.isModelsListLoaded = isLoaded;
-    });
-    this.store.select(fromModels.getAllModels).subscribe((modelsList) => {
-      this.modelsList = modelsList;
-    });
-  }
+  onReloadModels() {}
 }

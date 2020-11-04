@@ -4,7 +4,7 @@ export interface Horodate {
 }
 
 export interface Model {
-  id: string;
+  id?: string;
   label: string;
   type: string;
   icon: string;
@@ -19,6 +19,9 @@ export interface Content {
 export interface ModelsState {
   models: Model[];
   isLoaded: boolean;
+  isCreated: boolean;
+  isUpdated: boolean;
+  error: Error;
 }
 
 export interface ContentState {

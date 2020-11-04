@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { Router } from "@angular/router";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { of } from "rxjs";
 import { map, catchError, exhaustMap } from "rxjs/operators";
@@ -6,25 +7,45 @@ import { ModelsService } from "src/app/services/models.service";
 import {
   loadModelsPending,
   loadModelsSuccess,
-  loadModelsError,
+  loadModelsFail,
+  updateModelPending,
+  updateModelSuccess,
+  updateModelFail,
 } from "./models.actions";
 
 @Injectable()
 export class ModelsEffects {
+  constructor(
+    private actions$: Actions,
+    private modelsService: ModelsService,
+    private router: Router
+  ) {}
+
   loadModels$ = createEffect(() =>
     this.actions$.pipe(
       ofType(loadModelsPending),
       exhaustMap(() =>
         this.modelsService.getModels().pipe(
           map((models) => loadModelsSuccess({ models })),
-          catchError((error) => of(loadModelsError({ error })))
+          catchError((error) => of(loadModelsFail({ error })))
         )
       )
     )
   );
 
-  constructor(
-    private actions$: Actions,
-    private modelsService: ModelsService
-  ) {}
+  updateModel$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(updateModelPending),
+      exhaustMap((action) =>
+        this.modelsService
+          .updateModel(action.model)
+          .then(() => {
+            const model = action.model;
+
+            return updateModelSuccess({ model });
+          })
+          .catch((error) => updateModelFail({ error }))
+      )
+    )
+  );
 }

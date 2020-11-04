@@ -8,6 +8,7 @@ import { ModelsService } from "src/app/services/models.service";
 import { Model } from "src/app/types";
 import { Utils } from "src/app/utils";
 import * as fromModels from "src/app/ngrx/models/models.selectors";
+import { updateModelPending } from "src/app/ngrx/models/models.actions";
 
 @Component({
   selector: "cman-update-model",
@@ -88,7 +89,6 @@ export class CmanUpdateModelComponent implements OnInit {
   }
 
   onSubmit() {
-    Utils.sortObj({});
     const { isIncorrect, definition } = Utils.getDefinitionObject(
       this.updateModelForm.value["definition"]
     );
@@ -104,10 +104,12 @@ export class CmanUpdateModelComponent implements OnInit {
         ...this.updateModelForm.value,
         id: this.id,
         definition,
-        lastUpdate: this.modelsService.updateTimestamp(),
+        lastUpdate: { seconds: Date.now(), nanoseconds: 0 },
       };
-      this.modelsService.updateModel(model).then(() => {
-        this.router.navigate(["/admin"]);
+      this.store.dispatch(updateModelPending({ model }));
+      this.store.select(fromModels.getModelUploaded).subscribe((isUpdated) => {
+        console.log(isUpdated);
+        // this.router.navigate(["/admin"]);
       });
     }
   }

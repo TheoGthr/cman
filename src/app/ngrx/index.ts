@@ -1,5 +1,5 @@
-import { contentReducer } from "./content.reducer";
-import { modelsReducer } from "./models.reducer";
+import { contentReducer } from "./content/content.reducer";
+import { modelsReducer } from "./models/models.reducer";
 
 export const reducers = {
   models: modelsReducer,

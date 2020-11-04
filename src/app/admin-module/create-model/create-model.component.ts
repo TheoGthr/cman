@@ -1,10 +1,9 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { ConfirmDialogComponent } from "src/app/core-module/confirm-dialog/confirm-dialog.component";
-import { createModel } from "src/app/ngrx/models/models.actions";
 import { ModelsService } from "src/app/services/models.service";
 import { Model } from "src/app/types";
 import { Utils } from "src/app/utils";
@@ -60,7 +59,6 @@ export class CmanCreateModelComponent {
     private fb: FormBuilder,
     private modelsService: ModelsService,
     private router: Router,
-    private store: Store,
     public dialog: MatDialog
   ) {
     this.createModelForm = this.fb.group({

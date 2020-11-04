@@ -6,8 +6,8 @@ import { Observable } from "rxjs";
 import { map, shareReplay } from "rxjs/operators";
 import { loadModelsPending } from "src/app/ngrx/models/models.actions";
 import { ModelsService } from "../../services/models.service";
-import { Model } from "../../types";
-import { getAllModels } from "src/app/ngrx/models/models.selectors";
+import { Model, ModelsState } from "../../types";
+import { getModelsState } from "src/app/ngrx/models/models.selectors";
 
 @Component({
   selector: "cman-navbar",
@@ -35,7 +35,7 @@ import { getAllModels } from "src/app/ngrx/models/models.selectors";
           </a>
         </mat-nav-list>
         <mat-divider></mat-divider>
-        <mat-nav-list *ngFor="let modelName of modelList">
+        <mat-nav-list *ngFor="let modelName of modelsList">
           <a
             mat-list-item
             [routerLink]="['ct', modelName.type]"
@@ -45,6 +45,7 @@ import { getAllModels } from "src/app/ngrx/models/models.selectors";
             {{ modelName.label }}
           </a>
         </mat-nav-list>
+        <mat-spinner *ngIf="!isModelsListLoaded"></mat-spinner>
       </mat-sidenav>
       <mat-sidenav-content>
         <mat-toolbar color="primary">
@@ -65,7 +66,8 @@ import { getAllModels } from "src/app/ngrx/models/models.selectors";
   `,
 })
 export class CmanNavbarComponent implements OnInit {
-  modelList: Model[];
+  modelsList: Model[];
+  isModelsListLoaded = false;
 
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
@@ -77,14 +79,15 @@ export class CmanNavbarComponent implements OnInit {
   constructor(
     private breakpointObserver: BreakpointObserver,
     public router: Router,
-    private modelsService: ModelsService,
     private store: Store
   ) {}
 
   ngOnInit() {
+    console.log("init!");
     this.store.dispatch(loadModelsPending());
-    this.store.select(getAllModels).subscribe((models: Model[]) => {
-      this.modelList = models;
+    this.store.select(getModelsState).subscribe((state: ModelsState) => {
+      this.isModelsListLoaded = state.isLoaded;
+      this.modelsList = state.models;
     });
   }
 }
