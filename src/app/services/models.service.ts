@@ -38,7 +38,6 @@ export class ModelsService {
       .collection("models")
       .add(model)
       .then((modelRes) => {
-        console.log(modelRes);
         this.store.dispatch(createModelSuccess({ model }));
       })
       .catch((error) => {

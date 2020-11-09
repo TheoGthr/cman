@@ -74,7 +74,6 @@ export class CmanAdminHomeComponent implements OnInit {
     this.store
       .select(fromModels.getModelsState)
       .subscribe((state: ModelsState) => {
-        console.log("NGONINIT");
         this.isModelsListLoaded = state.isLoaded;
         if (this.isModelsListLoaded) {
           this.modelsList = state.models;

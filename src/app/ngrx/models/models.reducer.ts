@@ -28,6 +28,7 @@ const _modelsReducer = createReducer(
     loadModelsSuccess,
     (state, { models }) =>
       ({
+        ...state,
         models: models,
         isLoaded: true,
         error: null,
@@ -68,12 +69,6 @@ const _modelsReducer = createReducer(
     isUpdated: false,
   })),
   on(updateModelSuccess, (state, { model }) => {
-    const idx = state.models.map((e: Model) => e.id).indexOf(model.id);
-    state.models[idx] = {
-      ...model,
-      lastUpdate: { seconds: Date.now(), nanoseconds: 0 },
-    };
-
     return { ...state, error: null, isUpdated: true } as ModelsState;
   }),
   on(updateModelFail, (state, { error }) => {

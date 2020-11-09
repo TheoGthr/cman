@@ -83,7 +83,6 @@ export class CmanNavbarComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log("init!");
     this.store.dispatch(loadModelsPending());
     this.store.select(getModelsState).subscribe((state: ModelsState) => {
       this.isModelsListLoaded = state.isLoaded;

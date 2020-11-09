@@ -29,7 +29,7 @@ export const getModelsLoaded = createSelector(
   (state: ModelsState) => state.isLoaded
 );
 
-export const getModelUploaded = createSelector(
+export const getModelUpdated = createSelector(
   selectModels,
   (state: ModelsState) => state.isUpdated
 );

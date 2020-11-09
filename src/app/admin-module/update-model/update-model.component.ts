@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { ConfirmDialogComponent } from "src/app/core-module/confirm-dialog/confirm-dialog.component";
 import { ModelsService } from "src/app/services/models.service";
-import { Model } from "src/app/types";
+import { Model, ModelsState } from "src/app/types";
 import { Utils } from "src/app/utils";
 import * as fromModels from "src/app/ngrx/models/models.selectors";
 import { updateModelPending } from "src/app/ngrx/models/models.actions";
@@ -107,10 +107,11 @@ export class CmanUpdateModelComponent implements OnInit {
         lastUpdate: { seconds: Date.now(), nanoseconds: 0 },
       };
       this.store.dispatch(updateModelPending({ model }));
-      this.store.select(fromModels.getModelUploaded).subscribe((isUpdated) => {
-        console.log(isUpdated);
-        // this.router.navigate(["/admin"]);
-      });
+      this.store
+        .select(fromModels.getModelUpdated)
+        .subscribe((isUpdated: boolean) => {
+          if (isUpdated) this.router.navigate(["/admin"]);
+        });
     }
   }
 }
