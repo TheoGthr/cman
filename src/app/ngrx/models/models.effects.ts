@@ -11,6 +11,12 @@ import {
   updateModelPending,
   updateModelSuccess,
   updateModelFail,
+  createModelPending,
+  createModelSuccess,
+  deleteModelPending,
+  deleteModelSuccess,
+  deleteModelFail,
+  createModelFail,
 } from "./models.actions";
 
 @Injectable()
@@ -33,6 +39,23 @@ export class ModelsEffects {
     )
   );
 
+  createModel$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(createModelPending),
+      exhaustMap((action) =>
+        this.modelsService
+          .createModel(action.model)
+          .then((doc) => {
+            console.log(action.model);
+            action.model.id = doc.id;
+            console.log(action.model);
+            return createModelSuccess({ model: action.model });
+          })
+          .catch((error) => createModelFail({ error }))
+      )
+    )
+  );
+
   updateModel$ = createEffect(() =>
     this.actions$.pipe(
       ofType(updateModelPending),
@@ -43,6 +66,20 @@ export class ModelsEffects {
             return updateModelSuccess({ model: action.model });
           })
           .catch((error) => updateModelFail({ error }))
+      )
+    )
+  );
+
+  deleteModel$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(deleteModelPending),
+      exhaustMap((action) =>
+        this.modelsService
+          .deleteModel(action.modelId)
+          .then(() => {
+            return deleteModelSuccess({ modelId: action.modelId });
+          })
+          .catch((error) => deleteModelFail({ error }))
       )
     )
   );

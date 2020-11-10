@@ -5,7 +5,6 @@ import { Store } from "@ngrx/store";
 import { Observable } from "rxjs";
 import { map, shareReplay } from "rxjs/operators";
 import { loadModelsPending } from "src/app/ngrx/models/models.actions";
-import { ModelsService } from "../../services/models.service";
 import { Model, ModelsState } from "../../types";
 import { getModelsState } from "src/app/ngrx/models/models.selectors";
 
@@ -84,9 +83,14 @@ export class CmanNavbarComponent implements OnInit {
 
   ngOnInit() {
     this.store.dispatch(loadModelsPending());
-    this.store.select(getModelsState).subscribe((state: ModelsState) => {
-      this.isModelsListLoaded = state.isLoaded;
-      this.modelsList = state.models;
-    });
+    this.store.select(getModelsState).subscribe(
+      (state: ModelsState) => {
+        this.isModelsListLoaded = state.isLoaded;
+        this.modelsList = state.models;
+      },
+      (err) => {
+        this.modelsList = [];
+      }
+    );
   }
 }

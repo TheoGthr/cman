@@ -11,6 +11,7 @@ import {
   deleteModelSuccess,
   deleteModelFail,
   updateModelPending,
+  createModelPending,
 } from "./models.actions";
 
 export const initialState: ModelsState = {
@@ -44,22 +45,28 @@ const _modelsReducer = createReducer(
       } as ModelsState)
   ),
 
-  on(
-    createModelSuccess,
-    (state, { model }) =>
-      ({
-        ...state,
-        models: state.models.concat([
-          { ...model, lastUpdate: { seconds: Date.now(), nanoseconds: 0 } },
-        ]),
-        error: null,
-      } as ModelsState)
-  ),
+  on(createModelPending, (state, { model }) => ({
+    ...state,
+    isCreated: false,
+  })),
+  on(createModelSuccess, (state, { model }) => {
+    console.log(model);
+    return {
+      ...state,
+      isCreated: true,
+      models: [
+        ...state.models,
+        { ...model, lastUpdate: { seconds: Date.now(), nanoseconds: 0 } },
+      ],
+      error: null,
+    } as ModelsState;
+  }),
   on(
     createModelFail,
     (state, { error }) =>
       ({
         ...state,
+        isCreated: false,
         error,
       } as ModelsState)
   ),
@@ -69,10 +76,16 @@ const _modelsReducer = createReducer(
     isUpdated: false,
   })),
   on(updateModelSuccess, (state, { model }) => {
+    const idx = state.models.map((e: Model) => e.id).indexOf(model.id);
+    state.models[idx] = {
+      ...model,
+      lastUpdate: { seconds: Date.now(), nanoseconds: 0 },
+    };
+
     return { ...state, error: null, isUpdated: true } as ModelsState;
   }),
   on(updateModelFail, (state, { error }) => {
-    return { ...state, error } as ModelsState;
+    return { ...state, isUpdated: false, error } as ModelsState;
   }),
 
   on(deleteModelSuccess, (state, { modelId }) => {

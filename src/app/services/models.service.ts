@@ -1,13 +1,11 @@
 import { Injectable } from "@angular/core";
-import { AngularFirestore } from "@angular/fire/firestore";
+import { AngularFirestore, DocumentReference } from "@angular/fire/firestore";
 import { Store } from "@ngrx/store";
-import { map } from "rxjs/operators";
+import { map, take } from "rxjs/operators";
 import * as firebase from "firebase";
 import {
   createModelSuccess,
   createModelFail,
-  updateModelSuccess,
-  updateModelFail,
   deleteModelSuccess,
   deleteModelFail,
 } from "../ngrx/models/models.actions";
@@ -24,6 +22,7 @@ export class ModelsService {
       .collection("models")
       .snapshotChanges()
       .pipe(
+        take(1),
         map((changes) =>
           changes.map((c) => ({
             id: c.payload.doc.id,
@@ -33,16 +32,8 @@ export class ModelsService {
       );
   }
 
-  createModel(model: Model): Promise<void> {
-    return this.firestore
-      .collection("models")
-      .add(model)
-      .then((modelRes) => {
-        this.store.dispatch(createModelSuccess({ model }));
-      })
-      .catch((error) => {
-        this.store.dispatch(createModelFail({ error }));
-      });
+  createModel(model: Model): Promise<DocumentReference> {
+    return this.firestore.collection("models").add(model);
   }
 
   updateModel(model: Model): Promise<void> {
@@ -51,21 +42,10 @@ export class ModelsService {
     return this.firestore
       .doc("models/" + id)
       .update({ ...modelWithoutId, lastUpdate: timestamp });
-    // .then(() => {
-    //   model.id = modelId;
-    //   this.store.dispatch(updateModelSuccess({ model }));
-    // })
-    // .catch((error) => this.store.dispatch(updateModelFail({ error })));
   }
 
-  deleteModel(modelId: string): any {
-    return this.firestore
-      .doc("models/" + modelId)
-      .delete()
-      .then(() => {
-        this.store.dispatch(deleteModelSuccess({ modelId }));
-      })
-      .catch((error) => this.store.dispatch(deleteModelFail({ error })));
+  deleteModel(modelId: string): Promise<void> {
+    return this.firestore.doc("models/" + modelId).delete();
   }
 
   updateTimestamp(): any {

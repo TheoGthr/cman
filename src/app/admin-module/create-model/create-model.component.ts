@@ -2,11 +2,13 @@ import { Component } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { Router } from "@angular/router";
-import { Store } from "@ngrx/store";
+import * as fromModels from "src/app/ngrx/models/models.selectors";
 import { ConfirmDialogComponent } from "src/app/core-module/confirm-dialog/confirm-dialog.component";
 import { ModelsService } from "src/app/services/models.service";
 import { Model } from "src/app/types";
 import { Utils } from "src/app/utils";
+import { Store } from "@ngrx/store";
+import { createModelPending } from "src/app/ngrx/models/models.actions";
 
 @Component({
   selector: "cman-create-model",
@@ -59,6 +61,7 @@ export class CmanCreateModelComponent {
     private fb: FormBuilder,
     private modelsService: ModelsService,
     private router: Router,
+    private store: Store,
     public dialog: MatDialog
   ) {
     this.createModelForm = this.fb.group({
@@ -89,9 +92,13 @@ export class CmanCreateModelComponent {
         lastUpdate: this.modelsService.updateTimestamp(),
       };
 
-      this.modelsService.createModel(model).finally(() => {
-        this.router.navigate(["/admin"]);
-      });
+      this.store.dispatch(createModelPending({ model }));
+      this.store
+        .select(fromModels.getModelCreated)
+        .subscribe((isCreated: boolean) => {
+          console.log(isCreated);
+          if (isCreated) this.router.navigate(["/admin"]);
+        });
     }
   }
 }

@@ -2,9 +2,9 @@ import { Component, OnInit } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Store } from "@ngrx/store";
 import { ConfirmDialogComponent } from "src/app/core-module/confirm-dialog/confirm-dialog.component";
-import { ModelsService } from "src/app/services/models.service";
-import { AppState, Model, ModelsState } from "src/app/types";
+import { Model, ModelsState } from "src/app/types";
 import * as fromModels from "src/app/ngrx/models/models.selectors";
+import { deleteModelPending } from "src/app/ngrx/models/models.actions";
 
 @Component({
   selector: "cman-admin-home",
@@ -64,11 +64,7 @@ export class CmanAdminHomeComponent implements OnInit {
   isModelsListLoaded = false;
   errorModels: Error;
 
-  constructor(
-    public dialog: MatDialog,
-    private modelsService: ModelsService,
-    private store: Store
-  ) {}
+  constructor(public dialog: MatDialog, private store: Store) {}
 
   ngOnInit(): void {
     this.store
@@ -91,7 +87,7 @@ export class CmanAdminHomeComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.modelsService.deleteModel(modelId);
+        this.store.dispatch(deleteModelPending({ modelId }));
       }
     });
   }
