@@ -96,7 +96,6 @@ export class CmanCreateModelComponent {
       this.store
         .select(fromModels.getModelCreated)
         .subscribe((isCreated: boolean) => {
-          console.log(isCreated);
           if (isCreated) this.router.navigate(["/admin"]);
         });
     }

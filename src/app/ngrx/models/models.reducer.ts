@@ -50,7 +50,6 @@ const _modelsReducer = createReducer(
     isCreated: false,
   })),
   on(createModelSuccess, (state, { model }) => {
-    console.log(model);
     return {
       ...state,
       isCreated: true,
@@ -89,9 +88,8 @@ const _modelsReducer = createReducer(
   }),
 
   on(deleteModelSuccess, (state, { modelId }) => {
-    const index = state.models.map((e: Model) => e.id).indexOf(modelId);
-    state.models.splice(index, 1);
-    return { ...state } as ModelsState;
+    let models = state.models.filter((m: Model) => m.id !== modelId);
+    return { ...state, models } as ModelsState;
   }),
   on(deleteModelFail, (state, { error }) => {
     return { ...state, error } as ModelsState;

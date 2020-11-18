@@ -46,10 +46,8 @@ export class ModelsEffects {
         this.modelsService
           .createModel(action.model)
           .then((doc) => {
-            console.log(action.model);
-            action.model.id = doc.id;
-            console.log(action.model);
-            return createModelSuccess({ model: action.model });
+            let model = { ...action.model, id: doc.id };
+            return createModelSuccess({ model });
           })
           .catch((error) => createModelFail({ error }))
       )

@@ -5,8 +5,8 @@
 
 .models {
   display: flex;
-  justify-content: space-evenly;
-  margin-top: 5%;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .container {
@@ -19,4 +19,8 @@
 .action-buttons {
   display: flex;
   justify-content: space-around;
+}
+
+.cards {
+  margin: 5% 5% 2.5% 0;
 }
