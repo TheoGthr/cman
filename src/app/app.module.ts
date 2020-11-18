@@ -15,8 +15,10 @@ import { AdminModule } from "./admin-module/admin.module";
 import { StoreModule } from "@ngrx/store";
 import { StoreDevtoolsModule } from "@ngrx/store-devtools";
 import * as modelsReducer from "./ngrx/models/models.reducer";
+import * as contentReducer from "./ngrx/content/content.reducer";
 import { EffectsModule } from "@ngrx/effects";
 import { ModelsEffects } from "./ngrx/models/models.effects";
+import { ContentEffects } from "./ngrx/content/content.effects";
 
 @NgModule({
   declarations: [AppComponent],
@@ -32,12 +34,15 @@ import { ModelsEffects } from "./ngrx/models/models.effects";
     AngularFireDatabaseModule,
     CoreModule,
     AdminModule,
-    StoreModule.forRoot({ models: modelsReducer.modelsReducer }),
+    StoreModule.forRoot({
+      models: modelsReducer.modelsReducer,
+      content: contentReducer.contentReducer,
+    }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production,
     }),
-    EffectsModule.forRoot([ModelsEffects]),
+    EffectsModule.forRoot([ModelsEffects, ContentEffects]),
   ],
   exports: [MaterialModule],
   bootstrap: [AppComponent],

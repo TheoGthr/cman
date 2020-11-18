@@ -1,36 +1,103 @@
 import { Action, createReducer, on } from "@ngrx/store";
-import { ContentState } from "src/app/types";
-
+import { Content, ContentState } from "src/app/types";
 import {
-  createContent,
-  deleteContent,
-  getContentList,
-  updateContent,
+  loadContentPending,
+  loadContentSuccess,
+  loadContentFail,
+  updateContentPending,
+  updateContentSuccess,
+  updateContentFail,
+  createContentPending,
+  createContentSuccess,
+  deleteContentSuccess,
+  deleteContentFail,
+  createContentFail,
 } from "./content.actions";
 
 export const initialState: ContentState = {
-  contentList: [],
+  content: [],
+  type: null,
   isLoaded: false,
+  isUpdated: false,
+  isCreated: false,
+  error: null,
 };
 
 const _contentReducer = createReducer(
   initialState,
-  on(getContentList, (state, { contentList }) => ({
-    ...state,
-    contentList: contentList,
-    isLoaded: true,
+  on(loadContentPending, (state, { modelType }) => ({
+    ...initialState,
+    type: modelType,
   })),
-  on(createContent, (state) => ({
+  on(
+    loadContentSuccess,
+    (state, { content }) =>
+      ({
+        ...state,
+        content,
+        isLoaded: true,
+        error: null,
+      } as ContentState)
+  ),
+  on(
+    loadContentFail,
+    (state, { error }) =>
+      ({
+        ...state,
+        content: [],
+        type: null,
+        error,
+      } as ContentState)
+  ),
+
+  on(createContentPending, (state, { content }) => ({
     ...state,
-    contentList: [],
+    isCreated: false,
   })),
-  on(updateContent, (state) => {
-    return { ...state, contentList: [] };
+  on(createContentSuccess, (state, { content }) => {
+    return {
+      ...state,
+      isCreated: true,
+      content: [
+        ...state.content,
+        { ...content, lastUpdate: { seconds: Date.now(), nanoseconds: 0 } },
+      ],
+      error: null,
+    } as ContentState;
   }),
-  on(deleteContent, (state, { contentId }) => {
-    const index = state.contentList.map((e) => e.id).indexOf(contentId);
-    state.contentList.splice(index, 1);
-    return { ...state };
+  on(
+    createContentFail,
+    (state, { error }) =>
+      ({
+        ...state,
+        isCreated: false,
+        error,
+      } as ContentState)
+  ),
+
+  on(updateContentPending, (state, { content }) => ({
+    ...state,
+    isUpdated: false,
+  })),
+  on(updateContentSuccess, (state, { content }) => {
+    const idx = state.content.map((e: Content) => e.id).indexOf(content.id);
+    state.content[idx] = {
+      ...content,
+      lastUpdate: { seconds: Date.now(), nanoseconds: 0 },
+    };
+
+    return { ...state, error: null, isUpdated: true } as ContentState;
+  }),
+  on(updateContentFail, (state, { error }) => {
+    return { ...state, isUpdated: false, error } as ContentState;
+  }),
+
+  on(deleteContentSuccess, (state, { contentId }) => {
+    let content = state.content.filter((m: Content) => m.id !== contentId);
+    return { ...state, content } as ContentState;
+  }),
+  on(deleteContentFail, (state, { error }) => {
+    return { ...state, error } as ContentState;
   })
 );
 

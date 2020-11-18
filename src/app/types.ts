@@ -25,8 +25,12 @@ export interface ModelsState {
 }
 
 export interface ContentState {
-  contentList: any[];
+  content: Content[];
+  type: string;
   isLoaded: boolean;
+  isCreated: boolean;
+  isUpdated: boolean;
+  error: Error;
 }
 
 export interface AppState {

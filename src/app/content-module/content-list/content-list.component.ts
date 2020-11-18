@@ -1,13 +1,13 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Params } from "@angular/router";
 import { Store } from "@ngrx/store";
-import { Model } from "src/app/types";
+import { Content, ContentState, Model } from "src/app/types";
 import * as fromModels from "src/app/ngrx/models/models.selectors";
 import * as fromContent from "src/app/ngrx/content/content.selectors";
-import { ContentService } from "src/app/services/content.service";
-import { map } from "rxjs/operators";
-import { getContentList } from "src/app/ngrx/content/content.actions";
 import { Utils } from "src/app/utils";
+import { loadContentPending } from "src/app/ngrx/content/content.actions";
+import { MatTableDataSource } from "@angular/material/table";
+import { MatSort } from "@angular/material/sort";
 
 @Component({
   selector: "content-list",
@@ -28,12 +28,14 @@ import { Utils } from "src/app/utils";
         />
       </mat-form-field>
       <div class="mat-elevation-z8">
-        <table mat-table [dataSource]="contentList">
+        <table mat-table [dataSource]="contentList" matSort>
           <ng-container
             *ngFor="let col of displayedColumns"
             [matColumnDef]="col"
           >
-            <th mat-header-cell *matHeaderCellDef>{{ col | titlecase }}</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              {{ col | titlecase }}
+            </th>
             <td mat-cell *matCellDef="let element">
               {{ element[col] }}
             </td>
@@ -52,20 +54,27 @@ import { Utils } from "src/app/utils";
           </tr>
         </table>
       </div>
+      <mat-card *ngIf="errorContent">
+        <mat-card-header>
+          <mat-card-title>Error</mat-card-title>
+          <mat-card-subtitle>Please reload the page</mat-card-subtitle>
+        </mat-card-header>
+      </mat-card>
     </div>
   `,
 })
 export class CmanContentListComponent implements OnInit {
+  @ViewChild(MatSort) sort: MatSort;
+
   modelType: string;
   model: Model;
-  contentList;
+  contentList: MatTableDataSource<Content>;
+  errorContent: Error;
   displayedColumns: string[];
 
-  constructor(
-    private contentService: ContentService,
-    private route: ActivatedRoute,
-    private store: Store
-  ) {
+  constructor(private route: ActivatedRoute, private store: Store) {}
+
+  ngOnInit(): void {
     this.route.params.subscribe((params: Params) => {
       this.modelType = params.model;
       this.store
@@ -75,12 +84,21 @@ export class CmanContentListComponent implements OnInit {
           this.displayedColumns = Utils.getDefinitionArray(
             model.definition
           ).map((col) => col.slice(2));
+
+          this.store.dispatch(loadContentPending({ modelType: model.type }));
+          this.store
+            .select(fromContent.getContentState)
+            .subscribe((contentState: ContentState) => {
+              if (contentState.isLoaded) {
+                this.contentList = new MatTableDataSource<Content>(
+                  contentState.content
+                );
+                this.contentList.sort = this.sort;
+              }
+              this.errorContent = contentState.error;
+            });
         });
     });
-  }
-
-  ngOnInit(): void {
-    this.contentList = this.contentService.getContentByType(this.modelType);
   }
 
   applyFilter(event: Event) {

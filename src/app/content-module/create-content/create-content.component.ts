@@ -4,7 +4,7 @@ import { Store } from "@ngrx/store";
 import { Model } from "src/app/types";
 import * as fromModels from "src/app/ngrx/models/models.selectors";
 import { ContentService } from "src/app/services/content.service";
-import { createContent } from "src/app/ngrx/content/content.actions";
+import { createContentPending } from "src/app/ngrx/content/content.actions";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { Utils } from "src/app/utils";
@@ -101,7 +101,7 @@ export class CmanCreateContentComponent implements OnInit {
     this.route.params.subscribe((params: Params) => {
       this.modelType = params.model;
       this.store
-        .select(fromModels.getModelByType, this.modelType)
+        .select(fromModels.getModelById, this.modelType)
         .subscribe((model: Model) => {
           this.model = model;
           this.fields = Utils.getDefinitionArray(model.definition);
@@ -121,10 +121,12 @@ export class CmanCreateContentComponent implements OnInit {
       ...this.createContentForm.value,
       lastUpdate: this.contentService.updateTimestamp(),
     };
-
-    this.contentService.createContent(content).finally(() => {
-      this.router.navigate(["/ct/" + this.modelType]);
-    });
+    this.store.dispatch(createContentPending({ content }));
+    this.store
+      .select(fromModels.getModelCreated)
+      .subscribe((isCreated: boolean) => {
+        if (isCreated) this.router.navigate(["/ct/" + this.modelType]);
+      });
   }
 
   getSlicedField(field: string): string {

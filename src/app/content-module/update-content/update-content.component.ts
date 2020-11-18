@@ -2,12 +2,13 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { Model } from "src/app/types";
+import * as fromContent from "src/app/ngrx/content/content.selectors";
 import * as fromModels from "src/app/ngrx/models/models.selectors";
 import { ContentService } from "src/app/services/content.service";
-import { createContent } from "src/app/ngrx/content/content.actions";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { Utils } from "src/app/utils";
+import { updateContentPending } from "src/app/ngrx/content/content.actions";
 
 @Component({
   selector: "update-content",
@@ -85,8 +86,11 @@ export class CmanUpdateContentComponent implements OnInit {
       lastUpdate: this.contentService.updateTimestamp(),
     };
 
-    this.contentService.createContent(content).finally(() => {
-      this.router.navigate(["/ct/" + this.modelType]);
-    });
+    this.store.dispatch(updateContentPending({ content }));
+    this.store
+      .select(fromContent.getContentUpdated)
+      .subscribe((isUpdated: boolean) => {
+        if (isUpdated) this.router.navigate(["/ct/" + this.modelType]);
+      });
   }
 }

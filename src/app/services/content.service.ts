@@ -1,75 +1,44 @@
 import { Injectable } from "@angular/core";
-import { AngularFirestore } from "@angular/fire/firestore";
-import { Store } from "@ngrx/store";
-import { map } from "rxjs/operators";
+import { AngularFirestore, DocumentReference } from "@angular/fire/firestore";
+import { map, take } from "rxjs/operators";
 import * as firebase from "firebase";
-import {
-  createContent,
-  getContentList,
-  deleteContent,
-  updateContent,
-} from "../ngrx/content/content.actions";
 import { Content } from "../types";
 
 @Injectable({
   providedIn: "root",
 })
 export class ContentService {
-  constructor(private firestore: AngularFirestore, private store: Store) {}
+  constructor(private firestore: AngularFirestore) {}
 
   getContentByType(type: string) {
-    let contentList: Content[];
-
-    this.firestore
+    return this.firestore
       .collection("content", (ref) => ref.where("type", "==", type))
       .snapshotChanges()
       .pipe(
+        take(1),
         map((changes) =>
           changes.map((c) => ({
             id: c.payload.doc.id,
             ...(c.payload.doc.data() as Content),
           }))
         )
-      )
-      .subscribe((data) => {
-        contentList = data.map((e: Content) => {
-          return {
-            ...e,
-          };
-        });
-        this.store.dispatch(getContentList({ contentList }));
-      });
-    return contentList;
+      );
   }
 
-  createContent(content: any): Promise<void> {
-    return this.firestore
-      .collection("content")
-      .add(content)
-      .then((modelRes) => {
-        this.store.dispatch(createContent());
-      });
+  createContent(content: Content): Promise<DocumentReference> {
+    return this.firestore.collection("content").add(content);
   }
 
-  updateContent(content: any): Promise<void> {
-    const contentId = content.id;
-    delete content.id;
+  updateContent(content: Content): Promise<void> {
+    const { id, ...contentWithoutId } = content;
+    const timestamp = this.updateTimestamp();
     return this.firestore
-      .doc("content/" + contentId)
-      .update(content)
-      .then((modelRes) => {
-        this.store.dispatch(updateContent());
-      });
+      .doc("content/" + id)
+      .update({ ...contentWithoutId, lastUpdate: timestamp });
   }
 
-  deleteContent(contentId: string): any {
-    return this.firestore
-      .doc("content/" + contentId)
-      .delete()
-      .then(() => {
-        this.store.dispatch(deleteContent({ contentId }));
-      })
-      .catch((e) => console.error(e));
+  deleteContent(contentId: string): Promise<void> {
+    return this.firestore.doc("content/" + contentId).delete();
   }
 
   updateTimestamp(): any {
