@@ -5,9 +5,14 @@ import { Content, ContentState, Model } from "src/app/types";
 import * as fromModels from "src/app/ngrx/models/models.selectors";
 import * as fromContent from "src/app/ngrx/content/content.selectors";
 import { Utils } from "src/app/utils";
-import { loadContentPending } from "src/app/ngrx/content/content.actions";
+import {
+  deleteContentPending,
+  loadContentPending,
+} from "src/app/ngrx/content/content.actions";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatSort } from "@angular/material/sort";
+import { MatDialog } from "@angular/material/dialog";
+import { ConfirmDialogComponent } from "src/app/core-module/confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: "content-list",
@@ -33,12 +38,33 @@ import { MatSort } from "@angular/material/sort";
             *ngFor="let col of displayedColumns"
             [matColumnDef]="col"
           >
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              {{ col | titlecase }}
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element[col] }}
-            </td>
+            <ng-container *ngIf="col !== 'actions'">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{ col | titlecase }}
+              </th>
+              <td mat-cell *matCellDef="let element">
+                {{ element[col] }}
+              </td>
+            </ng-container>
+            <ng-container *ngIf="col === 'actions'" justify="end">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let element">
+                <button
+                  mat-icon-button
+                  matTooltip="Modify"
+                  [routerLink]="['update', element['id']]"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  matTooltip="Delete"
+                  (click)="onDelete(element['id'])"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
           </ng-container>
           <tr
             mat-header-row
@@ -72,7 +98,11 @@ export class CmanContentListComponent implements OnInit {
   errorContent: Error;
   displayedColumns: string[];
 
-  constructor(private route: ActivatedRoute, private store: Store) {}
+  constructor(
+    public dialog: MatDialog,
+    private route: ActivatedRoute,
+    private store: Store
+  ) {}
 
   ngOnInit(): void {
     this.route.params.subscribe((params: Params) => {
@@ -84,6 +114,7 @@ export class CmanContentListComponent implements OnInit {
           this.displayedColumns = Utils.getDefinitionArray(
             model.definition
           ).map((col) => col.slice(2));
+          this.displayedColumns.push("actions");
 
           this.store.dispatch(loadContentPending({ modelType: model.type }));
           this.store
@@ -104,5 +135,19 @@ export class CmanContentListComponent implements OnInit {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.contentList.filter = filterValue.trim().toLowerCase();
+  }
+
+  onDelete(contentId: string) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: "Do you confirm the deletion?",
+        confirm: true,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.store.dispatch(deleteContentPending({ contentId }));
+      }
+    });
   }
 }

@@ -13,6 +13,7 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @NgModule({
   imports: [
@@ -29,6 +30,7 @@ import { MatSortModule } from "@angular/material/sort";
     MatDialogModule,
     MatTableModule,
     MatSortModule,
+    MatTooltipModule,
   ],
   exports: [
     MatButtonModule,
@@ -44,6 +46,7 @@ import { MatSortModule } from "@angular/material/sort";
     MatDialogModule,
     MatTableModule,
     MatSortModule,
+    MatTooltipModule,
   ],
 })
 export class MaterialModule {}

@@ -3,6 +3,7 @@ import { ActivatedRoute, Params, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { Model } from "src/app/types";
 import * as fromModels from "src/app/ngrx/models/models.selectors";
+import * as fromContent from "src/app/ngrx/content/content.selectors";
 import { ContentService } from "src/app/services/content.service";
 import { createContentPending } from "src/app/ngrx/content/content.actions";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
@@ -101,7 +102,7 @@ export class CmanCreateContentComponent implements OnInit {
     this.route.params.subscribe((params: Params) => {
       this.modelType = params.model;
       this.store
-        .select(fromModels.getModelById, this.modelType)
+        .select(fromModels.getModelByType, this.modelType)
         .subscribe((model: Model) => {
           this.model = model;
           this.fields = Utils.getDefinitionArray(model.definition);
@@ -123,8 +124,9 @@ export class CmanCreateContentComponent implements OnInit {
     };
     this.store.dispatch(createContentPending({ content }));
     this.store
-      .select(fromModels.getModelCreated)
+      .select(fromContent.getContentCreated)
       .subscribe((isCreated: boolean) => {
+        console.log(isCreated);
         if (isCreated) this.router.navigate(["/ct/" + this.modelType]);
       });
   }
