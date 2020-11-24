@@ -52,7 +52,8 @@ import { ConfirmDialogComponent } from "src/app/core-module/confirm-dialog/confi
                 <button
                   mat-icon-button
                   matTooltip="Modify"
-                  [routerLink]="['update', element['id']]"
+                  [routerLink]="['update']"
+                  [queryParams]="{ id: element['id'] }"
                 >
                   <mat-icon>edit</mat-icon>
                 </button>

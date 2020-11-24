@@ -75,13 +75,15 @@ const _modelsReducer = createReducer(
     isUpdated: false,
   })),
   on(updateModelSuccess, (state, { model }) => {
-    const idx = state.models.map((e: Model) => e.id).indexOf(model.id);
-    state.models[idx] = {
-      ...model,
-      lastUpdate: { seconds: Date.now(), nanoseconds: 0 },
-    };
+    let models: Model[] = state.models
+      .map((m) => ({ ...m }))
+      .map((m) => {
+        return m.id === model.id
+          ? { ...model, lastUpdate: { seconds: Date.now(), nanoseconds: 0 } }
+          : { ...m };
+      });
 
-    return { ...state, error: null, isUpdated: true } as ModelsState;
+    return { ...state, models, error: null, isUpdated: true } as ModelsState;
   }),
   on(updateModelFail, (state, { error }) => {
     return { ...state, isUpdated: false, error } as ModelsState;

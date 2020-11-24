@@ -21,9 +21,47 @@ import { updateContentPending } from "src/app/ngrx/content/content.actions";
         (ngSubmit)="onSubmit()"
       >
         <div *ngFor="let field of fields">
-          <mat-form-field class="form-full-width" appearance="fill">
-            <mat-label>{{ field | titlecase }}</mat-label>
-            <input matInput [formControlName]="field" placeholder="" />
+          <!-- String -->
+          <mat-form-field
+            *ngIf="model.definition[field] === 'string'"
+            class="form-full-width"
+            appearance="fill"
+          >
+            <mat-label>{{ getSlicedField(field) | titlecase }}</mat-label>
+            <input
+              matInput
+              [formControlName]="getSlicedField(field)"
+              placeholder=""
+            />
+          </mat-form-field>
+
+          <!-- Number -->
+          <mat-form-field
+            *ngIf="model.definition[field] === 'number'"
+            class="form-full-width"
+            appearance="fill"
+          >
+            <mat-label>{{ getSlicedField(field) | titlecase }}</mat-label>
+            <input
+              matInput
+              [formControlName]="getSlicedField(field)"
+              placeholder=""
+              type="number"
+            />
+          </mat-form-field>
+
+          <!-- String[] -->
+          <mat-form-field
+            *ngIf="model.definition[field] === 'string[]'"
+            class="form-full-width"
+            appearance="fill"
+          >
+            <mat-label>{{ getSlicedField(field) | titlecase }}</mat-label>
+            <textarea
+              matInput
+              [formControlName]="getSlicedField(field)"
+              placeholder=""
+            ></textarea>
           </mat-form-field>
         </div>
         <button
@@ -33,7 +71,7 @@ import { updateContentPending } from "src/app/ngrx/content/content.actions";
           id="submit-model"
           [disabled]="!updateContentForm.valid"
         >
-          Create
+          Update
         </button>
       </form>
     </div>
@@ -61,20 +99,27 @@ export class CmanUpdateContentComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe((params: Params) => {
       this.modelType = params.model;
-
       this.route.queryParams.subscribe((qparams) => {
         this.id = qparams.id;
         this.store
           .select(fromModels.getModelByType, this.modelType)
           .subscribe((model: Model) => {
-            this.model = model;
-            this.fields = Utils.getDefinitionArray(model.definition);
-            const group = {};
-            this.fields.forEach((field) => {
-              group[field] = ["", Validators.required];
-            });
+            this.store
+              .select(fromContent.getContentById, this.id)
+              .subscribe((content) => {
+                this.model = model;
+                this.fields = Utils.getDefinitionArray(model.definition);
+                const group = {};
+                this.fields.forEach((field) => {
+                  group[this.getSlicedField(field)] = [
+                    content[this.getSlicedField(field)],
+                    Validators.required,
+                  ];
+                });
+                group["type"] = [this.modelType, Validators.required];
 
-            this.updateContentForm = this.fb.group(group);
+                this.updateContentForm = this.fb.group(group);
+              });
           });
       });
     });
@@ -82,6 +127,7 @@ export class CmanUpdateContentComponent implements OnInit {
 
   public onSubmit() {
     const content = {
+      id: this.id,
       ...this.updateContentForm.value,
       lastUpdate: this.contentService.updateTimestamp(),
     };
@@ -92,5 +138,9 @@ export class CmanUpdateContentComponent implements OnInit {
       .subscribe((isUpdated: boolean) => {
         if (isUpdated) this.router.navigate(["/ct/" + this.modelType]);
       });
+  }
+
+  getSlicedField(field: string): string {
+    return Utils.getSlicedDefField(field);
   }
 }

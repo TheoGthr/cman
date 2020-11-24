@@ -80,13 +80,20 @@ const _contentReducer = createReducer(
     isUpdated: false,
   })),
   on(updateContentSuccess, (state, { content }) => {
-    const idx = state.content.map((e: Content) => e.id).indexOf(content.id);
-    state.content[idx] = {
-      ...content,
-      lastUpdate: { seconds: Date.now(), nanoseconds: 0 },
-    };
+    let contents: Content[] = state.content
+      .map((c) => ({ ...c }))
+      .map((c) => {
+        return c.id === content.id
+          ? { ...content, lastUpdate: { seconds: Date.now(), nanoseconds: 0 } }
+          : { ...c };
+      });
 
-    return { ...state, error: null, isUpdated: true } as ContentState;
+    return {
+      ...state,
+      content: contents,
+      error: null,
+      isUpdated: true,
+    } as ContentState;
   }),
   on(updateContentFail, (state, { error }) => {
     return { ...state, isUpdated: false, error } as ContentState;

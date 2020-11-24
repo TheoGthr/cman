@@ -61,7 +61,8 @@ export class ContentEffects {
         this.contentService
           .updateContent(action.content)
           .then(() => {
-            return updateContentSuccess({ content: action.content });
+            const { lastUpdate, ...content } = action.content;
+            return updateContentSuccess({ content });
           })
           .catch((error) => updateContentFail({ error }))
       )

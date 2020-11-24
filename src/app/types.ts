@@ -8,7 +8,7 @@ export interface Model {
   label: string;
   type: string;
   icon: string;
-  lastUpdate: Horodate;
+  lastUpdate?: Horodate;
   definition: { [key: string]: any };
 }
 

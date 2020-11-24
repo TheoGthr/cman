@@ -61,7 +61,8 @@ export class ModelsEffects {
         this.modelsService
           .updateModel(action.model)
           .then(() => {
-            return updateModelSuccess({ model: action.model });
+            const { lastUpdate, ...model } = action.model;
+            return updateModelSuccess({ model });
           })
           .catch((error) => updateModelFail({ error }))
       )

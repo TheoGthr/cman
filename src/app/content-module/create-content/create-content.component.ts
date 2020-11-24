@@ -126,7 +126,6 @@ export class CmanCreateContentComponent implements OnInit {
     this.store
       .select(fromContent.getContentCreated)
       .subscribe((isCreated: boolean) => {
-        console.log(isCreated);
         if (isCreated) this.router.navigate(["/ct/" + this.modelType]);
       });
   }
